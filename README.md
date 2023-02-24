@@ -24,4 +24,4 @@ Crew Connect takes security seriously, because we know how important it is to ke
 
 ## Support
 
-If you have any questions or issues with Crew Connect, you can contact our support team, who will try their best to help you. If they can't, they'll just send you some funny memes to cheer you up. You can reach us at support@crewconnect.com. We can't wait to hear from you, even if you're just calling to say hi!
+If you have any questions or issues with Crew Connect, you can contact our support team, who will try their best to help you. If they can't, they'll just send you some funny memes to cheer you up. You can reach us at support@crew-connect.com. We can't wait to hear from you, even if you're just calling to say hi!
