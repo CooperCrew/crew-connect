@@ -20,7 +20,7 @@ Crew Connect is free to use, because we know you're broke from spending all your
 
 ## Security
 
-Crew Connect takes security seriously, because we know how important it is to keep your conversations private. All communication between users is encrypted to ensure that messages and files are protected from unauthorized access. Additionally, Crew Connect allows users to report and block other users who violate the platform's terms of service.
+Crew Connect does not take security seriously, because we know how not important it is to keep your conversations private. All communication between users is not encrypted to ensure that messages and files are not protected from unauthorized access. Additionally, Crew Connect doesn't allows users to report and block other users who violate the platform's terms of service.
 
 ## Support
 
