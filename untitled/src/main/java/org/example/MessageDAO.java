@@ -1,4 +1,3 @@
-
 package org.example;
 import org.example.util.DataAccessObject;
 
@@ -13,6 +12,7 @@ public class MessageDAO extends DataAccessObject{
     private static final String GET_BY_MESSAGE_CONTENT = "SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE message = ? ";
     private static final String DELETE_MESSAGE_BY_ID = "DELETE FROM messages WHERE msg_id = ?";
     private static final String DELETE_MESSAGE_BY_CONTENT = "DELETE FROM messages WHERE message = ?";
+    private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, CAST(? as DATE), ?);";
 
     public MessageDAO(Connection connection) {
         super(connection);
@@ -52,7 +52,7 @@ public class MessageDAO extends DataAccessObject{
         return message;
     }
 
-    public void deleteMessageById(long id) {
+    public void deleteByMessageId(long id) {
         try(PreparedStatement statement = this.connection.prepareStatement(DELETE_MESSAGE_BY_ID);) {
             statement.setLong(1, id);
             statement.executeUpdate();
@@ -62,9 +62,22 @@ public class MessageDAO extends DataAccessObject{
         }
     }
 
-    public void deleteMessageByContent(String content) {
+    public void deleteByMessageContent(String content) {
         try(PreparedStatement statement = this.connection.prepareStatement(DELETE_MESSAGE_BY_CONTENT);) {
             statement.setString(1, content);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendMessage(long gc_id, long user_id, String time_sent, String message) {
+        try(PreparedStatement statement = this.connection.prepareStatement(SEND_MESSAGE);) {
+            statement.setLong(1, gc_id);
+            statement.setLong(2, user_id);
+            statement.setString(3, time_sent);
+            statement.setString(4, message);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
