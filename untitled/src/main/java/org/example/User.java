@@ -1,17 +1,24 @@
 package org.example;
 
-public class User {
-    private int user_ID;
-    private String name;
-    private String username;
-    private  String email;
+import org.example.util.DataTransferObject;
 
-    public void setUser_ID(int user_ID) {
-        this.user_ID = user_ID;
+public class User implements DataTransferObject{
+    private Long user_id;
+    private String password;
+    private String username;
+    private String email;
+    private String status;
+
+    public long getId(){
+        return user_id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setUsername(String username) {
@@ -22,23 +29,12 @@ public class User {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    private String password;
-    private boolean status;
-
-    public int getUser_ID() {
-        return user_ID;
-    }
-
-    public String getName() {
-        return name;
+    public Long getUser_id() {
+        return user_id;
     }
 
     public String getUsername() {
@@ -53,7 +49,11 @@ public class User {
         return password;
     }
 
-    public boolean getStatus() {
+    public String getStatus() {
         return status;
+    }
+
+    public String toString(){
+        return "User{" + "userId=" + user_id + ", username=" + username + ", password:" + password + ", email:" + email + ", status=" + status + '}';
     }
 }
