@@ -14,5 +14,5 @@ public abstract class DataAccessObject <T extends DataTransferObject> {
         this.connection = connection;
     }
 
-    // public abstract T findById(long id);
+    public abstract T findById(long id);
 }

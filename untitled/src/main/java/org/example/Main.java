@@ -3,10 +3,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 public class Main {
     public static void main(String[] args) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
-                "disc_sample", "postgres", "password");
+                "crewconnect", "postgres", "password");
 
         try {
             Connection connection = dcm.getConnection();
@@ -15,31 +16,13 @@ public class Main {
             // while(resultSet.next()){
             //     System.out.println(resultSet.getInt(1));
             // }
-            
-            /* Code to test user queries */
-
-            // UserDAO userDAO = new UserDAO(connection);
-            // userDAO.registerUser("jacob", "jk", "jk@cooper.edu", "sussy");
-            // User user = userDAO.findByUserName("jacob");
-            // System.out.println(user);
-
-            /* Code to test message queries */
-            // MessageDAO messageDAO = new MessageDAO(connection);
-            // messageDAO.sendMessage(2, 6, "2023-02-05", "message");
-            // Message message1 = messageDAO.findById(14);
-            // System.out.println(message1);
-
-            /* Code to test groupchat queries */
-            // GroupchatDAO groupchatDAO = new GroupchatDAO(connection);
-            // Groupchat groupchat1 = groupchatDAO.findByGroupChatId(1);
-            // System.out.println(groupchat1);
-            // Groupchat groupchat2 = groupchatDAO.findByGroupChatName("colin groupchat");
-            // System.out.println(groupchat2);
-            // Groupchat groupchat3 = groupchatDAO.findByGroupChatSize("5");
-            // System.out.println(groupchat3);
-            // groupchatDAO.deleteByGroupChatId(3);
-            // groupchatDAO.updateGroupChatName(2, "colin");
-            // groupchatDAO.updateGroupChatSize(2, 5);
+            UserDAO userDAO = new UserDAO(connection);
+           
+            User user = userDAO.loginUser("jacob", "jk");
+            System.out.println(user);
+            MessageDAO messageDAO = new MessageDAO(connection);
+            Message message = messageDAO.findById(1);
+            System.out.println(message);
         }
         catch(SQLException e) {
             e.printStackTrace();
