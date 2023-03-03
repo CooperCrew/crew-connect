@@ -137,4 +137,25 @@ public class UserDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
+    
+    public User loginUser(String username, String password){
+        User user = new User();
+        try(PreparedStatement statement = this.connection.prepareStatement(GET_ONE_BY_USERNAME);) {
+            statement.setString(1, username);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                if(rs.getString("password").equals(password)){
+                    user.setUser_id(rs.getLong("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPassword(rs.getString("password"));
+                    user.setStatus(rs.getString("status"));
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return user;
+    }
 }
