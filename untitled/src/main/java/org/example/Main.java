@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
-                "discord_test", "postgres", "password");
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
+                "crewconnect", "postgres", "password");
 
         try {
             Connection connection = dcm.getConnection();
