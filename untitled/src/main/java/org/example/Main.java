@@ -3,10 +3,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
 public class Main {
     public static void main(String[] args) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
-                "disc_sample", "postgres", "password");
+                "discord_test", "postgres", "password");
 
         try {
             Connection connection = dcm.getConnection();
@@ -18,7 +20,7 @@ public class Main {
             
             /* Code to test user queries */
 
-            UserDAO userDAO = new UserDAO(connection);
+            // UserDAO userDAO = new UserDAO(connection);
             // userDAO.registerUser("jacob", "jk", "jk@cooper.edu", "sussy");
             // User user = userDAO.findByUserName("jacob");
             // System.out.println(user);
@@ -41,8 +43,18 @@ public class Main {
             // groupchatDAO.updateGroupChatName(2, "colin");
             // groupchatDAO.updateGroupChatSize(2, 5);
 
-            User user = userDAO.loginUser("jacob", "jk");
-            System.out.println(user);
+            // User user = userDAO.loginUser("jacob", "jk");
+            // System.out.println(user);
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+            ArrayList<String> message_join = joinsDAO.getMessagesFromUser(1);
+            System.out.println(message_join);
+            ArrayList<String> message_join2 = joinsDAO.getMessagesInGroupChat(1);
+            System.out.println(message_join2);
+            ArrayList<String> user_join = joinsDAO.getAllUsersInGroupChat(1);
+            System.out.println(user_join);
+            ArrayList<String> groupchat_join = joinsDAO.getAllGroupChatsWithUser(1);
+            System.out.println(groupchat_join);
+
         }
         catch(SQLException e) {
             e.printStackTrace();
