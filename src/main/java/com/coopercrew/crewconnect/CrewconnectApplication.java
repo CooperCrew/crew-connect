@@ -2,14 +2,39 @@ package com.coopercrew.crewconnect;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-@SpringBootApplication
-public class CrewconnectApplication {
 
+@SpringBootApplication
+@RestController
+public class CrewconnectApplication {
+	@PostMapping("/getUserById")
+	public User create(@RequestBody String message) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
+                "crewconnect", "postgres", "password");
+				User user = new User();
+        try {
+            Connection connection = dcm.getConnection();
+            UserDAO userDAO = new UserDAO(connection);
+
+            user = userDAO.findById(Long.parseLong(message));
+			
+            System.out.println(user);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 	public static void main(String[] args) {
 		DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
 		"crewconnect", "postgres", "password");
@@ -47,7 +72,7 @@ try {
 	// groupchatDAO.updateGroupChatName(2, "colin");
 	// groupchatDAO.updateGroupChatSize(2, 5);
 
-	 User user = userDAO.loginUser("jacob", "jk");
+	 User user = userDAO.findById(1);
 	
 	System.out.println(user);
 	//ArrayList<String> message_join = joinsDAO.getMessagesFromUser(1);
