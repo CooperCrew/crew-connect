@@ -176,7 +176,7 @@ public class Client {
 
             clear();
             line();
-            System.out.println("CrewConnect\n\n!q - Log Out\n!m - New Message");
+            System.out.println("CrewConnect\n\n!q - Log Out\n!m - New Message\n!gc - Create Group\n!gm - Group Message");
             line();
 
             // Variable declarations
@@ -208,6 +208,49 @@ public class Client {
                 line();
                 pause(2);
             }
+
+            // Code for writing a group message
+
+            else if (read.equals("!gm")) {
+
+                // Code to take input from user
+
+                System.out.print("Group Chat Name: ");
+                String chat = scan.nextLine();
+                System.out.print("Message: ");
+                String msg = scan.nextLine();
+
+                // Code to send the message (to be written)
+
+                clear();
+                line();
+                System.out.println("Message sent!");
+                line();
+                pause(2);
+
+            }
+
+            // Code for creating a group chat
+
+            else if (read.equals("!gc")) {
+
+                // Code to take input from user
+
+                System.out.print("Group Chat Name: ");
+                String chat_name = scan.nextLine();
+                System.out.print("Members (separated by commas): ");
+                String[] members = scan.nextLine().split(",");
+
+                // Code to send the message (to be written)
+
+                clear();
+                line();
+                System.out.println("Group chat created!");
+                line();
+                pause(2);
+
+            }
+
 
             // Code to constantly check the database (to be written)
         }
