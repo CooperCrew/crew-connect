@@ -24,7 +24,7 @@ public class JoinsDAO extends DataAccessObject{
             " where ugc.gc_id = ?";
     public static final String GET_ALL_MESSAGES_IN_GROUPCHAT = "SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN"  +
             " groupchats g ON g.gc_id = m.gc_id where m.gc_id = ?";
-
+      public static final String Get_all_message  =     "SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE gc_id = ?";
     public ArrayList<Groupchat> getAllGroupChatsWithUser(long id){
         Groupchat groupchat = new Groupchat();
         ArrayList<Groupchat> groupchatList = new ArrayList<Groupchat>();
@@ -57,7 +57,7 @@ public class JoinsDAO extends DataAccessObject{
                 message.setGc_id(rs.getLong("gc_id"));
                 message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
-                message.setUser_id(rs.getString("user_id"));
+                message.setUser_id(rs.getLong("user_id"));
                 messageList.add(message);
             }
         } catch(SQLException e) {
@@ -68,12 +68,12 @@ public class JoinsDAO extends DataAccessObject{
     }
 
     public ArrayList<User> getAllUsersInGroupChat(long id){
-        User user = new User();
         ArrayList<User> userList = new ArrayList<User>();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_USERS_IN_GROUPCHAT);) {
             statement.setLong(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
+                User user = new User();
                 user.setUser_id(rs.getLong("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
@@ -88,18 +88,23 @@ public class JoinsDAO extends DataAccessObject{
     }
 
     public ArrayList<Message> getMessagesInGroupChat(long id){
+        // Group Chat ID
+
+
         Message message = new Message();
         ArrayList<Message> messageList = new ArrayList<Message>();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_MESSAGES_IN_GROUPCHAT);) {
             statement.setLong(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
+                message = new Message();
                 message.setMessage_id(rs.getLong("msg_id"));
                 message.setGc_id(rs.getLong("gc_id"));
                 message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
-                message.setUser_id(rs.getString("user_id"));
+                message.setUser_id(rs.getLong("user_id"));
                 messageList.add(message);
+                
             }
         } catch(SQLException e) {
             e.printStackTrace();

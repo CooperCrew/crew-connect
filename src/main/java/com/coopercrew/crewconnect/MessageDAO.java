@@ -10,7 +10,6 @@ public class MessageDAO extends DataAccessObject{
     private static final String DELETE_MESSAGE_BY_ID = "DELETE FROM messages WHERE msg_id = ?";
     private static final String DELETE_MESSAGE_BY_CONTENT = "DELETE FROM messages WHERE message = ?";
     private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?);";
-
     public MessageDAO(Connection connection) {
         super(connection);
     }
@@ -21,7 +20,7 @@ public class MessageDAO extends DataAccessObject{
             message.setGc_id(rs.getLong("gc_id"));
             message.setTime_sent(rs.getLong("time_sent"));
             message.setMessage(rs.getString("message"));
-            message.setUser_id(rs.getString("user_id"));        }
+            message.setUser_id(rs.getLong("user_id"));        }
     }
     public Message findById(long id){
         Message message = new Message();
