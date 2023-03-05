@@ -1,4 +1,3 @@
-/home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/util/DataTransferObject.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/Joins.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/Groupchat.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/JoinsDAO.java
@@ -8,5 +7,7 @@
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/CrewconnectApplication.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/GroupchatDAO.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/MessageDAO.java
+/home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/util/DataTransferObject.java
+/home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/web/UserController.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/Message.java
 /home/john/Documents/crew-connect3/crew-connect/src/main/java/com/coopercrew/crewconnect/User.java
