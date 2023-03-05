@@ -1,6 +1,5 @@
 package com.coopercrew.crewconnect;
 import com.coopercrew.crewconnect.util.DataAccessObject;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,18 +7,18 @@ import java.sql.SQLException;
 import java.util.jar.Attributes.Name;
 
 public class GroupchatDAO extends DataAccessObject{
-
     public static final String GET_BY_GROUPCHAT_ID = "SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE gc_id = ?";
     public static final String GET_BY_GROUPNAME = "SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE group_name = ?";
     public static final String GET_BY_GROUPSIZE = "SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE group_size = ?";
     public static final String DELETE_BY_GROUPCHAT_ID = "DELETE from groupchats WHERE gc_id = ?";
     public static final String UPDATE_GROUPCHAT_SIZE = "UPDATE groupchats SET group_size = ? WHERE gc_id = ?";
     public static final String UPDATE_GROUPCHAT_NAME = "UPDATE groupchats SET group_name = ? WHERE gc_id = ?";
+    public static final String INSERT_GROUPCHAT = "INSERT INTO groupchats (group_name, group_size, date_created)" + 
+        "VALUES (?, ?, CAST(? as DATE))";
 
     public GroupchatDAO(Connection connection) {
         super(connection);
     }    
-
     public void setMessageAttributes(PreparedStatement statement, Groupchat groupchat) throws SQLException {
         ResultSet rs = statement.executeQuery();
         while(rs.next()) {
@@ -29,7 +28,6 @@ public class GroupchatDAO extends DataAccessObject{
             groupchat.setDateCreated(rs.getString("date_created"));
         }
     }
-
     public Groupchat findByGroupChatId(long id){
         Groupchat groupchat = new Groupchat();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_GROUPCHAT_ID);) {
@@ -41,7 +39,6 @@ public class GroupchatDAO extends DataAccessObject{
         }
         return groupchat;
     }
-
     public Groupchat findByGroupChatName(String name){
         Groupchat groupchat = new Groupchat();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_GROUPNAME)) {
@@ -53,7 +50,6 @@ public class GroupchatDAO extends DataAccessObject{
         }
         return groupchat;
     }
-
     public Groupchat findByGroupChatSize(String size){
         Groupchat groupchat = new Groupchat();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_GROUPSIZE);) {
@@ -65,7 +61,6 @@ public class GroupchatDAO extends DataAccessObject{
         }
         return groupchat;
     }
-
     public void deleteByGroupChatId(long id) {
         try(PreparedStatement statement = this.connection.prepareStatement(DELETE_BY_GROUPCHAT_ID);) {
             statement.setLong(1, id);
@@ -75,7 +70,6 @@ public class GroupchatDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
-
     public void updateGroupChatName(long id, String name){
         try(PreparedStatement statement = this.connection.prepareStatement(UPDATE_GROUPCHAT_NAME);) {
             statement.setString(1, name);
@@ -86,7 +80,6 @@ public class GroupchatDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
-
     public void updateGroupChatSize(long id, int size){
         try(PreparedStatement statement = this.connection.prepareStatement(UPDATE_GROUPCHAT_SIZE);) {
             statement.setInt(1, size);
@@ -97,5 +90,16 @@ public class GroupchatDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
-    
+
+    public void createGroupChat(String name, int size, String dateCreated){
+        try(PreparedStatement statement = this.connection.prepareStatement(INSERT_GROUPCHAT);) {
+            statement.setString(1, name);
+            statement.setLong(2, size);
+            statement.setString(3, dateCreated);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 }
