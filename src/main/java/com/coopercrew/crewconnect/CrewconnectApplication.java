@@ -20,7 +20,7 @@ public class CrewconnectApplication {
 	@PostMapping("/getUserById")
 	public User create(@RequestBody String message) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
-                "crewconnect", "postgres", "password");
+                "disc_sample", "postgres", "password");
 				User user = new User();
         try {
             Connection connection = dcm.getConnection();
@@ -36,8 +36,8 @@ public class CrewconnectApplication {
         return user;
     }
 	public static void main(String[] args) {
-		DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
-		"crewconnect", "postgres", "password");
+		DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
+		"disc_sample", "postgres", "password");
 
 try {
 	Connection connection = dcm.getConnection();
