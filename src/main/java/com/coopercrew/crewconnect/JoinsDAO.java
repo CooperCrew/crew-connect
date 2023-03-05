@@ -60,7 +60,7 @@ public class JoinsDAO extends DataAccessObject{
             while(rs.next()) {
                 message.setMessage_id(rs.getLong("msg_id"));
                 message.setGc_id(rs.getLong("gc_id"));
-                message.setTime_sent(rs.getString("time_sent"));
+                message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
                 message.setUser_id(rs.getString("user_id"));
                 messageList.add(message.toString());
@@ -101,7 +101,7 @@ public class JoinsDAO extends DataAccessObject{
             while(rs.next()) {
                 message.setMessage_id(rs.getLong("msg_id"));
                 message.setGc_id(rs.getLong("gc_id"));
-                message.setTime_sent(rs.getString("time_sent"));
+                message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
                 message.setUser_id(rs.getString("user_id"));
                 messageList.add(message.toString());

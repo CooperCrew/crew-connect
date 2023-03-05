@@ -4,7 +4,7 @@ import com.coopercrew.crewconnect.util.DataTransferObject;
 public class Message implements DataTransferObject{
     private Long message_id;
     private Long gc_id;
-    private String time_sent;
+    private Long time_sent;
     private String message;
     private String user_id;
     public long getId(){
@@ -27,11 +27,11 @@ public class Message implements DataTransferObject{
         this.gc_id = gc_id;
     }
 
-    public String getTime_sent() {
+    public Long getTime_sent() {
         return time_sent;
     }
 
-    public void setTime_sent(String time_sent) {
+    public void setTime_sent(Long time_sent) {
         this.time_sent = time_sent;
     }
 
