@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,29 +16,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 @SpringBootApplication
-@RestController
-public class CrewconnectApplication {
-	@PostMapping("/getUserById")
-	public User create(@RequestBody String message) {
-        DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
-                "disc_sample2", "postgres", "password");
-				User user = new User();
-        try {
-            Connection connection = dcm.getConnection();
-            UserDAO userDAO = new UserDAO(connection);
 
-            user = userDAO.findById(Long.parseLong(message));
-			
-            System.out.println(user);
-        }
-        catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
+public class CrewconnectApplication {
+
 	public static void main(String[] args) {
-		DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
-		"disc_sample2", "postgres", "password");
+		DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
+		"crewconnect3", "postgres", "password");
 
 try {
 	Connection connection = dcm.getConnection();
