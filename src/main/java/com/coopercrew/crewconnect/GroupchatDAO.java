@@ -15,6 +15,10 @@ public class GroupchatDAO extends DataAccessObject{
     public static final String UPDATE_GROUPCHAT_NAME = "UPDATE groupchats SET group_name = ? WHERE gc_id = ?";
     public static final String INSERT_GROUPCHAT = "INSERT INTO groupchats (group_name, group_size, date_created)" + 
         "VALUES (?, ?, CAST(? as DATE))";
+    public static final String INCREMENT_GROUP_SIZE = "UPDATE groupchats SET group_size = group_size + 1 WHERE gc_id = ?";
+    public static final String DECREMENT_GROUP_SIZE = "UPDATE groupchats SET group_size = group_size - 1 WHERE gc_id = ?";
+    public static final String ADD_USER_TO_GROUPCHAT = "INSERT INTO users_gc (gc_id, user_id) VALUES (?, ?)";
+    public static final String DELETE_USER_FROM_GROUPCHAT = "DELETE FROM users_gc WHERE gc_id = ? AND user_id = ?";
 
     public GroupchatDAO(Connection connection) {
         super(connection);
@@ -80,6 +84,7 @@ public class GroupchatDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
+
     public void updateGroupChatSize(long id, int size){
         try(PreparedStatement statement = this.connection.prepareStatement(UPDATE_GROUPCHAT_SIZE);) {
             statement.setInt(1, size);
@@ -90,6 +95,46 @@ public class GroupchatDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
+
+    public void addUserToGroupChat(long gcId, long userId){
+        // increment group size
+        try(PreparedStatement statement = this.connection.prepareStatement(INCREMENT_GROUP_SIZE);) {
+            statement.setLong(1, gcId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        // map the user to the groupchat via user_gc table
+        try(PreparedStatement statement = this.connection.prepareStatement(ADD_USER_TO_GROUPCHAT);) {
+            statement.setLong(1, gcId);
+            statement.setLong(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteUserFromGroupChat(long gcId, long userId){
+        // decrement group size
+        try(PreparedStatement statement = this.connection.prepareStatement(DECREMENT_GROUP_SIZE);) {
+            statement.setLong(1, gcId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        // dereference the user from the groupchat in user_gc table
+        try(PreparedStatement statement = this.connection.prepareStatement(DELETE_USER_FROM_GROUPCHAT);) {
+            statement.setLong(1, gcId);
+            statement.setLong(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }    
 
     public void createGroupChat(String name, int size, String dateCreated){
         try(PreparedStatement statement = this.connection.prepareStatement(INSERT_GROUPCHAT);) {
