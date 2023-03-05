@@ -18,9 +18,10 @@ import com.coopercrew.crewconnect.User;
 import com.coopercrew.crewconnect.UserDAO;
 @RestController
 public class UserController {
+    String hostname = "localhost";
     	@GetMapping("/getUserById/{id}")
 	public User getUserID(@PathVariable long id) {
-        DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect", "postgres", "password");
 				User user = new User();
 				System.out.println(id);
@@ -37,4 +38,26 @@ public class UserController {
         }
         return user;
 }
+@GetMapping("/findByUsername/{username}") 
+public User findByUsername(@PathVariable String username){
+    DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+    "crewconnect", "postgres", "password");
+    User user = new User();
+    System.out.println(user);
+    try {
+    Connection connection = dcm.getConnection();
+    UserDAO userDAO = new UserDAO(connection);
+
+    user = userDAO.findByUserName(username);
+
+    System.out.println(user);
+}
+catch(SQLException e) {
+e.printStackTrace();
+}
+return user;
+}
+
+
+
 }
