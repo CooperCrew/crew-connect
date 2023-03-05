@@ -6,7 +6,7 @@ public class Message implements DataTransferObject{
     private Long gc_id;
     private Long time_sent;
     private String message;
-    private String user_id;
+    private long user_id;
     public long getId(){
         return message_id; //?!is this needed
     }
@@ -39,11 +39,11 @@ public class Message implements DataTransferObject{
         return message;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return user_id;
     }
 
-    public void setUser_id(String user_id) {
+    public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
     public void setMessage(String message) {
