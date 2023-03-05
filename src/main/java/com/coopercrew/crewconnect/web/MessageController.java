@@ -106,7 +106,7 @@ public void DeleteMessagebyID(@PathVariable long id) {
 public ArrayList<Message> findByMessage(@PathVariable long id) {
     DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
             "crewconnect3", "postgres", "password");
-    ArrayList<Message> messages = new ArrayList<Message>();;
+    ArrayList<Message> messages = new ArrayList<Message>();
     try {
         Connection connection = dcm.getConnection();
         JoinsDAO joinsDAO = new JoinsDAO(connection);
