@@ -20,7 +20,7 @@ public class CrewconnectApplication {
 	@PostMapping("/getUserById")
 	public User create(@RequestBody String message) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
-                "disc_sample", "postgres", "password");
+                "disc_sample2", "postgres", "password");
 				User user = new User();
         try {
             Connection connection = dcm.getConnection();
@@ -37,7 +37,7 @@ public class CrewconnectApplication {
     }
 	public static void main(String[] args) {
 		DatabaseConnectionManager dcm = new DatabaseConnectionManager("db",
-		"disc_sample", "postgres", "password");
+		"disc_sample2", "postgres", "password");
 
 try {
 	Connection connection = dcm.getConnection();
@@ -48,8 +48,9 @@ try {
 	// }
 	
 	/* Code to test user queries */
-
-	 UserDAO userDAO = new UserDAO(connection);
+	MessageDAO messageDAO = new MessageDAO(connection);
+	Message message = messageDAO.findById(1);
+	System.out.println(message);
 	// userDAO.registerUser("jacob", "jk", "jk@cooper.edu", "sussy");
 	// User user = userDAO.findByUserName("jacob");
 	// System.out.println(user);
@@ -72,9 +73,9 @@ try {
 	// groupchatDAO.updateGroupChatName(2, "colin");
 	// groupchatDAO.updateGroupChatSize(2, 5);
 
-	 User user = userDAO.findById(1);
+	// User user = userDAO.findById(1);
 	
-	System.out.println(user);
+	// System.out.println(user);
 	//ArrayList<String> message_join = joinsDAO.getMessagesFromUser(1);
 	//System.out.println(message_join);
 	//ArrayList<String> message_join2 = joinsDAO.getMessagesInGroupChat(1);

@@ -72,11 +72,11 @@ public class MessageDAO extends DataAccessObject{
         }
     }
 
-    public void sendMessage(long gc_id, long user_id, String time_sent, String message) {
+    public void sendMessage(long gc_id, long user_id, Long time_sent, String message) {
         try(PreparedStatement statement = this.connection.prepareStatement(SEND_MESSAGE);) {
             statement.setLong(1, gc_id);
             statement.setLong(2, user_id);
-            statement.setString(3, time_sent);
+            statement.setLong(3, time_sent);
             statement.setString(4, message);
             statement.executeUpdate();
         } catch (SQLException e) {
