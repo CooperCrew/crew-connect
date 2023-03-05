@@ -1,12 +1,72 @@
 package org.example;
 
+import org.json.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Scanner;
-import java.util.Date;
 
 public class Client {
     public static void main(String[] args) {
         welcome();
         logon_seq();
+    }
+
+    /** curl_arr(String cmd): Curl Command
+     *  This function accepts a curl command as an input and will convert the output into a JSONArray.
+     *
+     *  @param cmd - Takes curl command as an input.
+     *  @return - Returns array of JSON files.
+     */
+
+    public static JSONArray curl_arr(String cmd) {
+
+        // Object Declarations
+
+        StringBuffer output = new StringBuffer();
+        JSONArray json_arr = new JSONArray();
+        Process p;
+
+        // Try-Catch Block for running the curl request within the runtime
+
+        try {
+            p = Runtime.getRuntime().exec(cmd);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            JSONTokener tokener = new JSONTokener(reader.readLine());
+            json_arr = new JSONArray(tokener);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json_arr;
+    }
+
+    /** curl(String cmd): Curl Command
+     *  This function accepts a curl command as an input and will convert the output into a JSONObject.
+     *
+     *  @param cmd - Takes curl command as an input.
+     *  @return - Returns a JSON Object.
+     */
+
+    public static JSONObject curl(String cmd) {
+
+        // Object Declarations
+
+        StringBuffer output = new StringBuffer();
+        JSONObject json_obj = new JSONObject();
+        Process p;
+
+        // Try-Catch Block for running the curl request within the runtime
+
+        try {
+            p = Runtime.getRuntime().exec(cmd);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            JSONTokener tokener = new JSONTokener(reader.readLine());
+            json_obj = new JSONObject(tokener);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json_obj;
     }
 
     /** pause(int seconds): Pause Function
@@ -57,7 +117,6 @@ public class Client {
         pause(2);
     }
 
-
     /* logon_seq(): User Login Screen
      * This "screen" implements the option to log in using a username and password or create an account of sorts.
      */
@@ -91,6 +150,15 @@ public class Client {
             String password = scan.nextLine();
 
             // Code to check if username and password combination is valid
+
+            // Curl Request Example
+
+            String curl_cmd = "curl --request GET \\\n" +
+                "  --url http://158.222.172.168:8080/user/1 \\\n" +
+                "  --header 'Content-Type: application/json'";
+
+            JSONArray user = curl_arr(curl_cmd);
+            System.out.println(user.getJSONObject(0).getString("password"));
 
             main_screen(user_name);
         }
