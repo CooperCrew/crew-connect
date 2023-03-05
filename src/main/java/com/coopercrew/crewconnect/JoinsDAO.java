@@ -24,7 +24,6 @@ public class JoinsDAO extends DataAccessObject{
             " where ugc.gc_id = ?";
     public static final String GET_ALL_MESSAGES_IN_GROUPCHAT = "SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN"  +
             " groupchats g ON g.gc_id = m.gc_id where m.gc_id = ?";
-      public static final String Get_all_message  =     "SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE gc_id = ?";
     public ArrayList<Groupchat> getAllGroupChatsWithUser(long id){
         Groupchat groupchat = new Groupchat();
         ArrayList<Groupchat> groupchatList = new ArrayList<Groupchat>();
@@ -32,6 +31,7 @@ public class JoinsDAO extends DataAccessObject{
             statement.setLong(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
+                groupchat = new Groupchat();
                 groupchat.setGroupChatId(rs.getLong("gc_id"));
                 groupchat.setGroupName(rs.getString("group_name"));
                 groupchat.setGroupSize(rs.getInt("group_size"));
@@ -53,6 +53,7 @@ public class JoinsDAO extends DataAccessObject{
             ResultSet rs = statement.executeQuery();
             System.out.println(rs);
             while(rs.next()) {
+                message = new Message();
                 message.setMessage_id(rs.getLong("msg_id"));
                 message.setGc_id(rs.getLong("gc_id"));
                 message.setTime_sent(rs.getLong("time_sent"));

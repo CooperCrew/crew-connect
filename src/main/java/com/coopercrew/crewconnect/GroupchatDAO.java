@@ -50,10 +50,10 @@ public class GroupchatDAO extends DataAccessObject{
         }
         return groupchat;
     }
-    public Groupchat findByGroupChatSize(String size){
+    public Groupchat findByGroupChatSize(int size){
         Groupchat groupchat = new Groupchat();
         try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_GROUPSIZE);) {
-            statement.setString(1, size);
+            statement.setInt(1, size);
             setMessageAttributes(statement, groupchat);
         } catch(SQLException e) {
             e.printStackTrace();
