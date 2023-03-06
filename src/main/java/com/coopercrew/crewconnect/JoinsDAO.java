@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.jar.Attributes.Name;
 import java.util.ArrayList;
 public class JoinsDAO extends DataAccessObject{
     public JoinsDAO(Connection connection) {
@@ -53,11 +54,11 @@ public class JoinsDAO extends DataAccessObject{
             System.out.println(rs);
             while(rs.next()) {
                 message = new Message();
-                message.setMessageId(rs.getLong("msg_id"));
-                message.setGroupChatId(rs.getLong("gc_id"));
-                message.setTimeSent(rs.getLong("time_sent"));
+                message.setMessage_id(rs.getLong("msg_id"));
+                message.setGc_id(rs.getLong("gc_id"));
+                message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
-                message.setUserId(rs.getLong("user_id"));
+                message.setUser_id(rs.getLong("user_id"));
                 messageList.add(message);
             }
         } catch(SQLException e) {
@@ -74,7 +75,7 @@ public class JoinsDAO extends DataAccessObject{
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
                 User user = new User();
-                user.setUserId(rs.getLong("user_id"));
+                user.setUser_id(rs.getLong("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setEmail(rs.getString("email"));
                 user.setStatus(rs.getString("status"));
@@ -98,11 +99,11 @@ public class JoinsDAO extends DataAccessObject{
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
                 message = new Message();
-                message.setMessageId(rs.getLong("msg_id"));
-                message.setGroupChatId(rs.getLong("gc_id"));
-                message.setTimeSent(rs.getLong("time_sent"));
+                message.setMessage_id(rs.getLong("msg_id"));
+                message.setGc_id(rs.getLong("gc_id"));
+                message.setTime_sent(rs.getLong("time_sent"));
                 message.setMessage(rs.getString("message"));
-                message.setUserId(rs.getLong("user_id"));
+                message.setUser_id(rs.getLong("user_id"));
                 messageList.add(message);
                 
             }

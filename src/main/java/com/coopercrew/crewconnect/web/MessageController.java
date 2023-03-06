@@ -1,21 +1,26 @@
 package com.coopercrew.crewconnect.web;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import com.coopercrew.crewconnect.DatabaseConnectionManager;
 import com.coopercrew.crewconnect.*;
 
 @RestController
 public class MessageController {
-    String hostname = "134.209.208.225";
+    String hostname = "db";
     
 
     @GetMapping("/message/{id}")
@@ -66,7 +71,7 @@ public class MessageController {
             Connection connection = dcm.getConnection();
             MessageDAO messageDAO = new MessageDAO(connection);
 
-            messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
+            messageDAO.sendMessage(message.getGc_id(), message.getUserId(), message.getTime_sent(), message.getMessage());
             
             }
         catch(SQLException e) {
