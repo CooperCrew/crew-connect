@@ -20,9 +20,9 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class MessageController {
-    String hostname = "localhost";
+    String hostname = "134.209.208.225";
     
-    // get message by id
+
     @GetMapping("/message/{id}")
 	public Message getmessageID(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -41,8 +41,9 @@ public class MessageController {
             e.printStackTrace();
         }
         return message;
-    }
-    // get message my message content
+}
+
+
     @GetMapping("/message")
     public Message findByMessage(@PathVariable String content) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -61,7 +62,7 @@ public class MessageController {
         }
         return message;
     }
-    // send message to GC
+
     @PostMapping("/message")
     public Message createMessage(@RequestBody Message message) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -78,7 +79,10 @@ public class MessageController {
         }
         return message;
     }
-    // delete by message id
+
+
+
+
     @DeleteMapping("/message/{id}") 
     public void DeleteMessagebyID(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -95,16 +99,15 @@ public class MessageController {
         }
     
     }
-    // get all messages in groupchat
-    @GetMapping("/message/id/{id}")
-    public ArrayList<Message> getMessagesInGroupChat(@PathVariable long id) {
+    
+    @GetMapping("/message/groupID/{id}")
+    public ArrayList<Message> findByMessage(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
         ArrayList<Message> messages = new ArrayList<Message>();
         try {
             Connection connection = dcm.getConnection();
             JoinsDAO joinsDAO = new JoinsDAO(connection);
-
             messages = joinsDAO.getMessagesInGroupChat(id);
             
         }
@@ -117,8 +120,7 @@ public class MessageController {
         return messages;
     }
 
-    // get all messages from user
-    @GetMapping("/message/id/{id}")
+    @GetMapping("/message/groupname/{id}")
     public ArrayList<Message> getMessagesFromUser(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");

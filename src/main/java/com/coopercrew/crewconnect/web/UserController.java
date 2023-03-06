@@ -22,7 +22,7 @@ import com.coopercrew.crewconnect.UserDAO;
 
 @RestController
 public class UserController {
-    String hostname = "localhost";
+    String hostname = "134.209.208.225";
     // find user by user id
     @GetMapping("/user/{id}")
 	public User getUserID(@PathVariable long id) {
