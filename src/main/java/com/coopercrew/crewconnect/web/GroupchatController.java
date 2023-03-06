@@ -111,7 +111,7 @@ public class GroupchatController {
     }
 
     // get groupchat by size
-    @GetMapping("/groupchat/{size}") 
+    @GetMapping("/groupchat/size/{size}") 
     public void getbyGroupSize(@PathVariable int size) {
         
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -183,7 +183,7 @@ public class GroupchatController {
     }
 
     // add user to groupchat
-    @PutMapping("/groupchat/gcId/{gcId}/userId/{userId}") 
+    @PutMapping("/groupchat/gcId1/{gcId}/userId1/{userId}") 
     public void addUserToGroupChat(@PathVariable long gcId, @PathVariable long userId) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
@@ -198,7 +198,7 @@ public class GroupchatController {
     }
 
     // delete user from groupchat
-    @PutMapping("/groupchat/gcId/{gcId}/userId/{userId}") 
+    @PutMapping("/groupchat/gcId2/{gcId}/userId2/{userId}") 
     public void deleteUserFromGroupChat(@PathVariable long gcId, @PathVariable long userId) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
@@ -212,6 +212,3 @@ public class GroupchatController {
         }
     }
 }
-
-
-
