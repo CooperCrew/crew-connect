@@ -1,15 +1,13 @@
 com/coopercrew/crewconnect/JoinsDAO.class
-com/coopercrew/crewconnect/web/MessageController.class
 com/coopercrew/crewconnect/util/DataTransferObject.class
 com/coopercrew/crewconnect/web/UserController.class
-com/coopercrew/crewconnect/util/DataAccessObject.class
 com/coopercrew/crewconnect/Joins.class
+com/coopercrew/crewconnect/util/DataAccessObject.class
 com/coopercrew/crewconnect/Message.class
-GroupchatController.class
 com/coopercrew/crewconnect/MessageDAO.class
 com/coopercrew/crewconnect/UserDAO.class
 com/coopercrew/crewconnect/User.class
 com/coopercrew/crewconnect/DatabaseConnectionManager.class
 com/coopercrew/crewconnect/GroupchatDAO.class
-com/coopercrew/crewconnect/CrewconnectApplication.class
 com/coopercrew/crewconnect/Groupchat.class
+com/coopercrew/crewconnect/CrewconnectApplication.class
