@@ -27,7 +27,17 @@ def welcome():
     print("Welcome to CrewConnect!")
     line()
     time.sleep(2)
-    
+
+# prog_quit(): Quits CrewConnect
+
+def prog_quit():
+    clear() 
+    line()
+    print("Thanks for using CrewConnect!") 
+    line() 
+    time.sleep(2) 
+    exit()
+
 # logon_seq(): User Login Screen
 # This "screen" implements the option to log in using a username and password or create an account of sorts.
 
@@ -70,11 +80,11 @@ def logon_seq():
 
             try:
                 r = requests.post("http://134.209.208.225:8080/user/login", json={"user_id" : 0, "username": user_name, "password": password})
+                break
             except:
                 print("Error: Invalid username or password. Please try again.")
-
-            quit = True
-            main_screen(r)
+        
+        main_screen(r)
 
     # If user wants to create an account 
 
@@ -87,14 +97,21 @@ def logon_seq():
         print("Create an Account") 
         line() 
 
-        # Take input from user
+        while not quit:
 
-        name = input("Name: ")
-        user_name = input("Username: ")
-        email = input("Email: ") 
-        password = input("Password: ")
+            # Take input from user
 
-        # Request to enter in database
+            user_name = input("Username: ")
+            email = input("Email: ") 
+            password = input("Password: ")
+
+            # Request to enter in database
+
+            try:
+                r = requests.post("http://134.209.208.225:8080/user/register", json={"user_id" : 0, "password": password, "username": user_name, "email": email, "status": "Offline"})
+                break
+            except:
+                print("Error: Failed to register user.")
 
         clear()
         line()
@@ -109,13 +126,10 @@ def logon_seq():
     # If user wants to quit
 
     elif option == "3":
-        clear() 
-        line()
-        print("Thanks for using CrewConnect!") 
-        line() 
-        time.sleep(2) 
-        exit()
+        prog_quit()
 
+# main_screen(r): Main Screen
+# This "screen" will continuously check for messages, giving the user the option to respond.
 
 def main_screen(r):
 
@@ -140,7 +154,7 @@ def main_screen(r):
 
         clear()
         line() 
-        print("CrewConnect\n\n!q - Log Out\n!m - New Message\n!gc - Create Group\n!gm - Group Message\n!gcv - View Group Chats") 
+        print("CrewConnect\n\n!q - Log Out\n!cc - Create Channel\n!cv - View Channels") 
         line()
 
         # User Input
@@ -150,46 +164,37 @@ def main_screen(r):
         # Code for quitting the client
 
         if option == "!q":
-            quit = True 
+            logon_seq()
 
-        # Code for sending a message
+        # Code for viewing channels
 
-        elif option == "!m":
-
-            # User input
-
-            recipient = input("Recipient Username: ")
-            msg = input("Message: ")
-
-            # Request to send the message 
+        elif option == "!cv":
 
             clear()
-            line()
-            print("Message sent.")
-            line() 
-            time.sleep(2)
 
-        # Code for viewing group chats
-
-        elif option == "!gcv":
-
-            # Request to access all group chats
+            # Request to access all channels
 
             try:
                 req = requests.get("http://134.209.208.225:8080/groupchats/id/" + str(user_id))
             except:
-                print("Error: Error getting group chats.")
+                print("Error: Error getting channels.")
 
             for entry in req.json(): 
-                print("["+entry["id"]+"] "+entry["group_name"])
-
+                print("["+str(entry["groupChatId"])+"] "+entry["groupName"])
             line()
 
             # User input
 
-            gc_id = input("Group Chat Selection: ")
+            gc_id = input("Group Chat Selection (or press !q to return to main menu): ")
+
+            # If user wants to quit
+
+            if gc_id == "!q":
+                continue
             
-            # Request to access selected group chat
+            # Request to access selected channel
+
+            line()
 
             try:
                 req = requests.get("http://134.209.208.225:8080/message/groupID/" + str(gc_id))
@@ -199,30 +204,23 @@ def main_screen(r):
             # Print all messages
 
             for entry in req.json(): 
-                try:
-                    user_req = requests.post("http://134.209.208.225:8080/user/login", json={"user_id" : entry["user_id"], "username": user_name})
-                except: 
-                    print("Error: Error getting user.")
-
-                print("Time: " + entry["time_sent"] + "\nUser: " + user_req.json()["username"])
+                user_req = requests.get("http://134.209.208.225:8080/user/" + str(entry["userId"]))
+                print("User: " + user_req.json()["username"] + "\nMessage: " + entry["message"])
                 line()
             
-            msg = input("Message (or press !q to return to main menu)") 
+            msg = input("Message (or press !q to return to main menu): ") 
 
             # If user wants to quit
 
             if msg == "!q":
-                line() 
-                print("Exiting...")
-                line() 
-                time.sleep(2)
+                continue
 
             # If user wants to send a message
 
             else:
 
                 try:
-                    msg_req = requests.post("http://134.209.208.225:8080/message", json={"message_id": 0, "gc_id": gc_id, "user_id": user_id, "message": msg, "time_sent": datetime.now()})
+                    msg_req = requests.post("http://134.209.208.225:8080/message", json={"message_id": 0, "gc_id": gc_id, "user_id": user_id, "message": msg, "time_sent": 10})
                     clear()
                     line()
                     print("Message sent.") 
@@ -231,28 +229,33 @@ def main_screen(r):
                 except:
                     print("Error: Error sending message.")
 
-        # Code for creating a group chat
+        # Code for creating a channel
 
-        elif option == "!gc": 
+        elif option == "!cc": 
 
             # User input
 
-            name = input("Group Chat Name: ")
+            name = input("Channel Name: ")
             members = input("Members (separated by commas): ").split(",")
 
             # Code to create group chat
-
+            
             try:
-                create_req = requests.post("http://134.209.208.225:8080/groupchat", json={"gc_id": 0, "group_name": name, "group_size": len(members), "date_created": datetime.today()})
+                create_req = requests.post("http://134.209.208.225:8080/groupchat/newGroupName/"+name+"/size/0/date/2023-01-10")
+                id_req = requests.get("http://134.209.208.225:8080/groupchat/"+ name)
             except: 
-                print("Error: Error creating group chat.")
-
+                print("Error: Error creating channel.")
+            try: 
+                add_req = requests.put("http://134.209.208.225:8080/groupchat/gcId1/" + str(id_req.json()["id"]) +"/userId1/" + str(user_id))
+            except: 
+                print("Error: Error creating channel.")
             for member in members:
-                print("add_req")
+                user_req = requests.get("http://134.209.208.225:8080/user/username/" + member)
+                add_req = requests.put("http://134.209.208.225:8080/groupchat/gcId1/" + str(id_req.json()["id"]) +"/userId1/" + str(user_req.json()["user_id"]))
 
             clear()
             line()
-            print("Group chat created.")
+            print("Channel created.")
             line()
             time.sleep(2)
 
