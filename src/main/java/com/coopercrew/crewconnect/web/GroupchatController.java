@@ -21,7 +21,7 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class GroupchatController {
-    String hostname = "134.209.208.225";
+    String hostname = "db";
 
     // get by groupchat ID
     @GetMapping("/groupchat/id/{id}")
@@ -113,7 +113,7 @@ public class GroupchatController {
             groupChat = groupChatD.findByGroupChatSize(size);
         }
         catch(SQLException e) {
-            e.printStackTrace();cd
+            e.printStackTrace();
         }
         return groupChat;
     }
