@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class CrewconnectApplication {
 
 	public static void main(String[] args) {
-		DatabaseConnectionManager dcm = new DatabaseConnectionManager("localhost",
+		DatabaseConnectionManager dcm = new DatabaseConnectionManager("134.209.208.225",
 		"crewconnect3", "postgres", "password");
 
 try {
@@ -35,6 +35,9 @@ try {
 	MessageDAO messageDAO = new MessageDAO(connection);
 	Message message = messageDAO.findById(1);
 	System.out.println(message);
+//	GroupchatDAO groupchatD = new GroupchatDAO(connection);
+	//groupchatD.addUserToGroupChat(10, 1);
+	
 	// userDAO.registerUser("jacob", "jk", "jk@cooper.edu", "sussy");
 	// User user = userDAO.findByUserName("jacob");
 	// System.out.println(user);
