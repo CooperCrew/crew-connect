@@ -21,7 +21,7 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class GroupchatController {
-    String hostname = "db";
+    String hostname = "134.209.208.225";
 
     // get by groupchat ID
     @GetMapping("/groupchat/id/{id}")

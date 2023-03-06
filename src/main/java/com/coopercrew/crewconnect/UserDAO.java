@@ -27,7 +27,7 @@ public class UserDAO extends DataAccessObject{
     private void setUserAttributes(PreparedStatement statement, User user) throws SQLException {
         ResultSet rs = statement.executeQuery();
         while(rs.next()){
-            user.setUser_id(rs.getLong("user_id"));
+            user.setUserId(rs.getLong("user_id"));
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
@@ -145,7 +145,7 @@ public class UserDAO extends DataAccessObject{
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
                 if(rs.getString("password").equals(password)){
-                    user.setUser_id(rs.getLong("user_id"));
+                    user.setUserId(rs.getLong("user_id"));
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
                     user.setPassword(rs.getString("password"));

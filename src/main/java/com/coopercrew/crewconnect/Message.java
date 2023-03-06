@@ -11,27 +11,27 @@ public class Message implements DataTransferObject{
         return message_id; //?!is this needed
     }
 
-    public Long getMessage_id() {
+    public Long getMessageId() {
         return message_id;
     }
 
-    public void setMessage_id(Long message_id) {
+    public void setMessageId(Long message_id) {
         this.message_id = message_id;
     }
 
-    public Long getGc_id() {
+    public Long getGroupChatId() {
         return gc_id;
     }
 
-    public void setGc_id(Long gc_id) {
+    public void setGroupChatId(Long gc_id) {
         this.gc_id = gc_id;
     }
 
-    public Long getTime_sent() {
+    public Long getTimeSent() {
         return time_sent;
     }
 
-    public void setTime_sent(Long time_sent) {
+    public void setTimeSent(Long time_sent) {
         this.time_sent = time_sent;
     }
 
@@ -43,7 +43,7 @@ public class Message implements DataTransferObject{
         return user_id;
     }
 
-    public void setUser_id(long user_id) {
+    public void setUserId(long user_id) {
         this.user_id = user_id;
     }
     public void setMessage(String message) {
