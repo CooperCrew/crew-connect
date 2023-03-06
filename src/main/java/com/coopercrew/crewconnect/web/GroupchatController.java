@@ -21,7 +21,7 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class GroupchatController {
-    String hostname = "localhost";
+    String hostname = "134.209.208.225";
 
     // get by groupchat ID
     @GetMapping("/groupchat/id/{id}")
@@ -47,26 +47,19 @@ public class GroupchatController {
     }
 
     // insert groupchat
-    @PostMapping("/groupchat")
-	public Groupchat makeGroupchat(@RequestBody Groupchat new_groupchat) {
-
-
+    @PostMapping("/groupchat/newGroupName/{groupname}/size/{size}/date/{date}")
+	public void makeGroupchat(@PathVariable String groupname, @PathVariable int size, @PathVariable String date) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
-				Groupchat groupChat = new Groupchat();
-	
         try {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
-                
-             groupChatD.createGroupChat(new_groupchat.getGroupName(), new_groupchat.getGroupSize(), new_groupchat.getDateCreated());
-			
-            System.out.println(groupChat);
+
+           groupChatD.createGroupChat(groupname, size, "2023-07-08");
         }
         catch(SQLException e) {
             e.printStackTrace();
         }
-        return groupChat;
     }
 
     // get groupchat by group name
@@ -81,7 +74,7 @@ public class GroupchatController {
         try {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
-            groupChatD.findByGroupChatName(groupname);
+            groupChat = groupChatD.findByGroupChatName(groupname);
             System.out.println(groupChat);
         }
         catch(SQLException e) {
@@ -94,11 +87,8 @@ public class GroupchatController {
     // delete groupchat by id
     @DeleteMapping("/groupchat/{id}") 
     public void deleteByGroupchatID(@PathVariable long id) {
-
-
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
-            
         try {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
@@ -112,20 +102,20 @@ public class GroupchatController {
 
     // get groupchat by size
     @GetMapping("/groupchat/size/{size}") 
-    public void getbyGroupSize(@PathVariable int size) {
-        
+    public Groupchat getbyGroupSize(@PathVariable int size) {
+       
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
-            
+                Groupchat groupChat = new Groupchat();
         try {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
-            groupChatD.findByGroupChatSize(size);
-
+            groupChat = groupChatD.findByGroupChatSize(size);
         }
         catch(SQLException e) {
-            e.printStackTrace();
+            e.printStackTrace();cd
         }
+        return groupChat;
     }
     
     // update groupchat size
@@ -190,7 +180,7 @@ public class GroupchatController {
         try {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
-            groupChatD.addUserToGroupChat(gcId, userId);
+           groupChatD.addUserToGroupChat(gcId, userId);
         }
         catch(SQLException e) {
             e.printStackTrace();
