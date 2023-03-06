@@ -13,7 +13,7 @@ public class User implements DataTransferObject{
         return user_id;
     }
 
-    public void setUser_id(Long user_id) {
+    public void setUserId(Long user_id) {
         this.user_id = user_id;
     }
 
@@ -33,7 +33,7 @@ public class User implements DataTransferObject{
         this.status = status;
     }
 
-    public Long getUser_id() {
+    public Long getUserId() {
         return user_id;
     }
 

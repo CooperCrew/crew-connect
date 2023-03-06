@@ -16,11 +16,11 @@ public class MessageDAO extends DataAccessObject{
     public void setMessageAttributes(PreparedStatement statement, Message message) throws SQLException {
         ResultSet rs = statement.executeQuery();
         while(rs.next()) {
-            message.setMessage_id(rs.getLong("msg_id"));
-            message.setGc_id(rs.getLong("gc_id"));
-            message.setTime_sent(rs.getLong("time_sent"));
+            message.setMessageId(rs.getLong("msg_id"));
+            message.setGroupChatId(rs.getLong("gc_id"));
+            message.setTimeSent(rs.getLong("time_sent"));
             message.setMessage(rs.getString("message"));
-            message.setUser_id(rs.getLong("user_id"));        }
+            message.setUserId(rs.getLong("user_id"));        }
     }
     public Message findById(long id){
         Message message = new Message();

@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.jar.Attributes.Name;
 
 public class GroupchatDAO extends DataAccessObject{
     public static final String GET_BY_GROUPCHAT_ID = "SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE gc_id = ?";
