@@ -145,6 +145,7 @@ public class GroupchatController {
             e.printStackTrace();
         }
     }
+
     // update groupchat name
     @PutMapping("/groupchat/id/{id}/name/{name}") 
     public void updateGroupName(@PathVariable long id, @PathVariable String name) {
@@ -162,22 +163,52 @@ public class GroupchatController {
             e.printStackTrace();
         }
     }
+
     // get all groupchats with user
-    @getMapping("/groupchats/id/{id}") {
-        public ArrayList<Groupchat> getGroupchatfromUser (@PathVariable int id) {
-            ArrayList<Groupchat> Groupchats = new ArrayList<Groupchat>();
-            DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-                    "crewconnect3", "postgres", "password");
-                
-            try {
-                Connection connection = dcm.getConnection();
-                JoinsDAO joinsDAO = new JoinsDAO(connection);
-                Groupchats = joinsDAO.getAllGroupChatsWithUser(id);
-            }
-            catch(SQLException e) {
-                e.printStackTrace();
-            }
-            return Groupchats;
+    @GetMapping("/groupchats/id/{id}")
+    public ArrayList<Groupchat> getGroupchatfromUser (@PathVariable int id) {
+        ArrayList<Groupchat> Groupchats = new ArrayList<Groupchat>();
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+            
+        try {
+            Connection connection = dcm.getConnection();
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+            Groupchats = joinsDAO.getAllGroupChatsWithUser(id);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return Groupchats;
+    }
+
+    // add user to groupchat
+    @PutMapping("/groupchat/gcId/{gcId}/userId/{userId}") 
+    public void addUserToGroupChat(@PathVariable long gcId, @PathVariable long userId) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            GroupchatDAO groupChatD = new GroupchatDAO(connection);
+            groupChatD.addUserToGroupChat(gcId, userId);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // delete user from groupchat
+    @PutMapping("/groupchat/gcId/{gcId}/userId/{userId}") 
+    public void deleteUserFromGroupChat(@PathVariable long gcId, @PathVariable long userId) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            GroupchatDAO groupChatD = new GroupchatDAO(connection);
+            groupChatD.deleteUserFromGroupChat(gcId, userId);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
         }
     }
 }

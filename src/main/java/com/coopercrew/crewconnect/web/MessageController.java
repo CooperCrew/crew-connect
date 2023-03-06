@@ -22,7 +22,7 @@ import com.coopercrew.crewconnect.*;
 public class MessageController {
     String hostname = "localhost";
     
-
+    // get message by id
     @GetMapping("/message/{id}")
 	public Message getmessageID(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
@@ -41,86 +41,99 @@ public class MessageController {
             e.printStackTrace();
         }
         return message;
-}
-
-
-@GetMapping("/message")
-public Message findByMessage(@PathVariable String content) {
-    DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-            "crewconnect3", "postgres", "password");
-            Message message = new Message();
-    try {
-        Connection connection = dcm.getConnection();
-        MessageDAO messageDAO = new MessageDAO(connection);
-
-        message = messageDAO.findByMessage(content);
-        
-        System.out.println(message);
     }
-    catch(SQLException e) {
-        e.printStackTrace();
-    }
-    return message;
-}
+    // get message my message content
+    @GetMapping("/message")
+    public Message findByMessage(@PathVariable String content) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+                Message message = new Message();
+        try {
+            Connection connection = dcm.getConnection();
+            MessageDAO messageDAO = new MessageDAO(connection);
 
-@PostMapping("/message")
-public Message createMessage(@RequestBody Message message) {
-    DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-            "crewconnect3", "postgres", "password");
-    try {
-        Connection connection = dcm.getConnection();
-        MessageDAO messageDAO = new MessageDAO(connection);
-
-        messageDAO.sendMessage(message.getGc_id(), message.getUserId(), message.getTime_sent(), message.getMessage());
-        
+            message = messageDAO.findByMessage(content);
+            
+            System.out.println(message);
         }
-    catch(SQLException e) {
-        e.printStackTrace();
-    }
-    return message;
-}
-
-
-
-
-@DeleteMapping("/message/{id}") 
-public void DeleteMessagebyID(@PathVariable long id) {
-    DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-            "crewconnect3", "postgres", "password");
-    try {
-        Connection connection = dcm.getConnection();
-        MessageDAO messageDAO = new MessageDAO(connection);
-
-        messageDAO.deleteByMessageId(id);
-        
+        catch(SQLException e) {
+            e.printStackTrace();
         }
-    catch(SQLException e) {
-        e.printStackTrace();
+        return message;
     }
- 
-}
+    // send message to GC
+    @PostMapping("/message")
+    public Message createMessage(@RequestBody Message message) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            MessageDAO messageDAO = new MessageDAO(connection);
 
-
-
-@GetMapping("/message/getGC/{id}")
-public ArrayList<Message> findByMessage(@PathVariable long id) {
-    DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-            "crewconnect3", "postgres", "password");
-    ArrayList<Message> messages = new ArrayList<Message>();
-    try {
-        Connection connection = dcm.getConnection();
-        JoinsDAO joinsDAO = new JoinsDAO(connection);
-
-         messages = joinsDAO.getMessagesInGroupChat(id);
-        
+            messageDAO.sendMessage(message.getGc_id(), message.getUserId(), message.getTime_sent(), message.getMessage());
+            
+            }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return message;
     }
-    catch(SQLException e) {
-        e.printStackTrace();
-    }
-    for(Message a: messages) {
-            System.out.println(a);
-    }
-    return messages;
-}
+    // delete by message id
+    @DeleteMapping("/message/{id}") 
+    public void DeleteMessagebyID(@PathVariable long id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            MessageDAO messageDAO = new MessageDAO(connection);
 
+            messageDAO.deleteByMessageId(id);
+            
+            }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+    
+    }
+    // get all messages in groupchat
+    @GetMapping("/message/id/{id}")
+    public ArrayList<Message> getMessagesInGroupChat(@PathVariable long id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        ArrayList<Message> messages = new ArrayList<Message>();
+        try {
+            Connection connection = dcm.getConnection();
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+
+            messages = joinsDAO.getMessagesInGroupChat(id);
+            
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        for(Message a: messages) {
+                System.out.println(a);
+        }
+        return messages;
+    }
+
+    // get all messages from user
+    @GetMapping("/message/id/{id}")
+    public ArrayList<Message> getMessagesFromUser(@PathVariable long id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        ArrayList<Message> messages = new ArrayList<Message>();
+        try {
+            Connection connection = dcm.getConnection();
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+            messages = joinsDAO.getMessagesFromUser(id);
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        for(Message a: messages) {
+                System.out.println(a);
+        }
+        return messages;
+    }
 }
