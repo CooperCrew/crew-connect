@@ -21,7 +21,7 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class GroupchatController {
-    String hostname = "134.209.208.225";
+    String hostname = "db";
 
     // get by groupchat ID
     @GetMapping("/groupchat/id/{id}")
@@ -55,7 +55,7 @@ public class GroupchatController {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
 
-           groupChatD.createGroupChat(groupname, size, "2023-07-08");
+           groupChatD.createGroupChat(groupname, size, date);
         }
         catch(SQLException e) {
             e.printStackTrace();
@@ -188,7 +188,7 @@ public class GroupchatController {
     }
 
     // delete user from groupchat
-    @PutMapping("/groupchat/gcId2/{gcId}/userId2/{userId}") 
+    @DeleteMapping("/groupchat/gcId2/{gcId}/userId2/{userId}") 
     public void deleteUserFromGroupChat(@PathVariable long gcId, @PathVariable long userId) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");

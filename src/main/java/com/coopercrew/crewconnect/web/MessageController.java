@@ -15,7 +15,7 @@ import com.coopercrew.crewconnect.*;
 
 @RestController
 public class MessageController {
-    String hostname = "134.209.208.225";
+    String hostname = "db";
     
 
     @GetMapping("/message/{id}")
