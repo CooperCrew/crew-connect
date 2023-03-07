@@ -8,7 +8,7 @@ public class Groupchat implements DataTransferObject{
     private String date_created;
 
     public long getId(){
-        return gc_id; //?!is this needed
+        return gc_id; 
     }
 
     public Long getGroupChatId(){
