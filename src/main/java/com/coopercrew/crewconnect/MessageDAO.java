@@ -20,7 +20,8 @@ public class MessageDAO extends DataAccessObject{
             message.setGroupChatId(rs.getLong("gc_id"));
             message.setTimeSent(rs.getLong("time_sent"));
             message.setMessage(rs.getString("message"));
-            message.setUserId(rs.getLong("user_id"));        }
+            message.setUserId(rs.getLong("user_id"));       
+         }
     }
     public Message findById(long id){
         Message message = new Message();
