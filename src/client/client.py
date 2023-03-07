@@ -5,6 +5,8 @@ import os
 import time
 import datetime
 
+
+
 # line(): Line Printing Function
 # This function prints a line, just for consistency's sake.
 def unix_time_to_string(unix_time):
@@ -268,7 +270,7 @@ def main_screen(r):
             # Code to create group chat
             
             try:
-                create_req = requests.post("http://134.209.208.225:8080/groupchat/newGroupName/"+name+"/size/0/date/2023-01-10")
+                create_req = requests.post("http://134.209.208.225:8080/groupchat/newGroupName/"+name+"/size/0/date/" + datetime.now().strftime("%Y-%m-%d"))
                 id_req = requests.get("http://134.209.208.225:8080/groupchat/"+ name)
             except: 
                 print("Error: Error creating channel.")
