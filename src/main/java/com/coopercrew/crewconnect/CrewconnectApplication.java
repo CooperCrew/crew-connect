@@ -20,11 +20,11 @@ import java.util.ArrayList;
 public class CrewconnectApplication {
 
 	public static void main(String[] args) {
-		DatabaseConnectionManager dcm = new DatabaseConnectionManager("134.209.208.225",
-		"crewconnect3", "postgres", "password");
+//		DatabaseConnectionManager dcm = new DatabaseConnectionManager("134.209.208.225",
+//		"crewconnect3", "postgres", "password");
 
-try {
-	Connection connection = dcm.getConnection();
+//try {
+//	Connection connection = dcm.getConnection();
 	// Statement statement = connection.createStatement();
 	//  ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM users");
 	//  while(resultSet.next()){
@@ -32,9 +32,9 @@ try {
 	// }
 	
 	/* Code to test user queries */
-	MessageDAO messageDAO = new MessageDAO(connection);
-	Message message = messageDAO.findById(1);
-	System.out.println(message);
+//	MessageDAO messageDAO = new MessageDAO(connection);
+//	Message message = messageDAO.findById(1);
+//	System.out.println(message);
 //	GroupchatDAO groupchatD = new GroupchatDAO(connection);
 	//groupchatD.addUserToGroupChat(10, 1);
 	
@@ -72,10 +72,10 @@ try {
 	//ArrayList<String> groupchat_join = joinsDAO.getAllGroupChatsWithUser(1);
 	//System.out.println(groupchat_join);
 
-}
-catch(SQLException e) {
-	e.printStackTrace();
-}
+//}
+//catch(SQLException e) {
+//	e.printStackTrace();
+//}
 		SpringApplication.run(CrewconnectApplication.class, args);
 	}
 

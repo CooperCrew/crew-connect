@@ -55,7 +55,7 @@ public class GroupchatController {
             Connection connection = dcm.getConnection();
             GroupchatDAO groupChatD = new GroupchatDAO(connection);
 
-           groupChatD.createGroupChat(groupname, size, "2023-07-08");
+           groupChatD.createGroupChat(groupname, size, date);
         }
         catch(SQLException e) {
             e.printStackTrace();
