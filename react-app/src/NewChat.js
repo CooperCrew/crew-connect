@@ -44,9 +44,9 @@ const NewChat = ({onCreate}) => {
     // HTML for popup
 
     return (
-        <div className = "popup-form">
+        <div>
             <button type="button" onClick={togglePopup}>New Chat</button>
-            {isOpen && <Popup
+            {isOpen && <Popup class="popup-form"
                 content={<>
                     <h1>Create New Chat</h1>
                     <form onSubmit={handleSubmit}>
@@ -61,7 +61,7 @@ const NewChat = ({onCreate}) => {
                             type="text" 
                             id="users" 
                             placeholder="Users"
-                            size="90"
+                            size="85"
                             required
                             value={users} 
                             onChange={(event) => setUsers(event.target.value.split(","))} 

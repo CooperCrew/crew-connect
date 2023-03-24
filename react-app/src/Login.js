@@ -109,6 +109,10 @@ const Login = ({onLogin}) => {
             />
 
             <button type="submit">Create Account</button>
+            <p>
+                Back to{' '}
+                <a href="#" onClick={toggleCreateAccount} style ={{"color": "#0f85c1"}}>login</a>
+            </p>
             </form>
             )}
         </div>

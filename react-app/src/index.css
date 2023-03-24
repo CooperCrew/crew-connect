@@ -13,6 +13,8 @@ code {
     monospace;
 }
 
+/* Container Styling */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -29,6 +31,8 @@ code {
 .container p {
   color: #8a8e94;
 }
+
+/* Form Styling */
 
 .form {
   display: flex;
@@ -58,14 +62,18 @@ code {
   background-color: #8962ee;
 }
 
+/* Page Styling */
+
 .page {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   background-color: #313338;
   color: #d0d0d0;
 }
 
 .page button {
-  padding: 10px;
+  padding: 15px 30px;
   border-radius: 5px;
   margin-left: 0px;
   border: none;
@@ -75,11 +83,21 @@ code {
   cursor: pointer;
 }
 
-.page ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 5px;
+.page input {
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Chat List Styling */
+
+.list button {
+  display: flex;
+  margin-bottom: 15px;
+  padding: 15px 100px;
+  flex-direction: column;
 }
 
 /* Styles for pop-ups */
@@ -145,9 +163,9 @@ code {
   margin-right: 20px;
 }
 
-/* Log Out Button Positioning */
+/* Bottom Button Positioning */
 
-.log-out {
+.bottom {
   position: absolute;
   bottom: 0;
   margin-bottom: 10px;
