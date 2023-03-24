@@ -10,6 +10,8 @@ import NewChat from './NewChat';
 
 let newChatId = 3; // ID used for new chats
 
+// Static Data for testing
+
 let test_chats = [
     {
         id: 1,
