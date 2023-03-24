@@ -1,19 +1,26 @@
+// Imports
+
 import React from 'react';
 
-const ChatList = ({ chats, onSelect, onNewChat }) => {
+// Just fetching the list of chats
 
-return (
-    <div className='page'>
-        <h4>Your Chats</h4>
-        <ul>
-            {chats.map((chat) => (
-                <button key={chat.id} onClick={() => onSelect(chat.id)}>
-                    {chat.name}
-                </button>
-            ))}
-        </ul>
-    </div>
-);
+const ChatList = ({chats, onSelect}) => {
+
+    // Return chat list HTML
+
+    return (
+        <div className='list'>
+            <h3>Your Chats</h3>
+                {chats.map((chat) => (
+                    <button key={chat.id} onClick={() => onSelect(chat.id)}>
+                        <b>{chat.name}</b>{chat.users.map((user) => (
+                            <span>{user}&emsp;</span>
+                            ))}
+                    </button>
+                    
+                ))}
+        </div>
+    );
 };
 
 export default ChatList;

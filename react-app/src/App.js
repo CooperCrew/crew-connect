@@ -1,72 +1,125 @@
-import React, { useState } from 'react';
+// Imports
+
+import React, {useState} from 'react';
 import Login from './Login';
 import ChatList from './ChatList';
 import Chat from './Chat';
 import NewChat from './NewChat';
 
+// External variable declarations
+
+let newChatId = 3; // ID used for new chats
+
+// Static Data for testing
+
+let test_chats = [
+    {
+        id: 1,
+        users: ["User 1", "User 2"],
+        name: 'Group Chat 1',
+        messages: [
+            { sender: 'User 1', text: 'Hello' },
+            { sender: 'User 2', text: 'Hi there' },
+        ],
+    },
+    {
+        id: 2,
+        users: ["User 1", "User 2"],
+        name: 'Group Chat 2',
+        messages: [
+            { sender: 'User 1', text: 'Hey' },
+            { sender: 'User 2', text: 'What\'s up?' },
+        ],
+    },
+];
+
+// Main application
+
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [selectedChatId, setSelectedChatId] = useState(null);
-  const [showNewChat, setShowNewChat] = useState(false);
-  const [chats, setChats] = useState([]);
 
-  const handleLogin = (username, password) => {
-    // Perform login logic here
-    setLoggedIn(true);
-  };
+    // Variable Declarations
 
-  const handleLogout = () => {
-    setLoggedIn(false);
-  };
+    const [loggedIn, setLoggedIn] = useState(false); // Boolean for logging in
+    const [selectedChatId, setSelectedChatId] = useState(null); // Integer for chat selection
+    const [chats, setChats] = useState(test_chats); // List of chats
+    
 
-  const handleSelectChat = (chatId) => {
-    setSelectedChatId(chatId);
-  };
+    // Handler for logging in, pending login logic
 
-  const handleNewChat = () => {
-    setShowNewChat(true);
-  };
+    const handleLogin = (username, password) => {
+        setLoggedIn(true);
+    };
 
-  const handleCreateChat = (users, name) => {
-    const newChatId = Math.max(...chats.map((chat) => chat.id)) + 1;
-    const newChat = { id: newChatId, users, name, messages: [] };
-    setChats([...chats, newChat]);
-    setSelectedChatId(newChatId);
-  };
+    // Handler for logging out
 
-  const handleNewChatClose = () => {
-    setShowNewChat(false);
-  };
+    const handleLogout = () => {
+        setLoggedIn(false);
+    };
 
-  if (!loggedIn) {
-    return <Login onLogin={handleLogin} />;
-  }
+    // Handler for clicking on a chat to view it
 
-  if (selectedChatId) {
-    const selectedChat = chats.find((chat) => chat.id === selectedChatId);
-    return <Chat chat={selectedChat} setSelectedChatId={setSelectedChatId} />;
-  }
+    const handleSelectChat = (chatId) => {
+        setSelectedChatId(chatId);
+    };
 
-  return (
-    <div className='page'>
-      <h1>CrewConnect</h1>
-      <NewChat
-        show={showNewChat}
-        onClose={handleNewChatClose}
-        onCreate={handleCreateChat}
-      />
-      <ChatList
-        chats={chats}
-        onSelect={handleSelectChat}
-        onNewChat={handleNewChat}
-      />
-      {selectedChatId && (
-        <Chat chat={chats.find((chat) => chat.id === selectedChatId)} setSelectedChatId={setSelectedChatId} />
-      )}
-      <button onClick={handleLogout}>Log Out</button>
-    </div>
-  );
+    // Handler for creating a new chat
+
+    const handleCreateChat = (users, name) => {
+        const newChat = { id: newChatId, users, name, messages: []};
+        setChats([...chats, newChat]);
+        setSelectedChatId(newChatId++);
+    };
+
+    
+    const handleSendMessage = (chatId, message) => {
+        const newChats = chats.map((chat) => {
+            if (chat.id === chatId) {
+                return {
+                    ...chat,
+                    messages: [...chat.messages, { sender: "You", text: message }]
+                };
+            }
+            return chat;
+        });
+        setChats(newChats);
+    };
+
+    // Showing the login page
+
+    if (!loggedIn) {
+        return <Login onLogin={handleLogin} />;
+    }
+
+    // Showing the selected chat
+
+    if (selectedChatId) {
+        const selectedChat = chats.find((chat) => chat.id === selectedChatId);
+        return ( <Chat 
+            chat={selectedChat} 
+            setSelectedChatId={setSelectedChatId} 
+            onSendMessage={handleSendMessage}
+            />
+        );
+    }
+
+    // Return main HTML for home page
+
+    return (
+        <div className='page'>
+            <h1>CrewConnect</h1>
+            <NewChat
+                show={selectedChatId != null}
+                onCreate={handleCreateChat}
+            />
+            <ChatList
+                chats={chats}
+                onSelect={handleSelectChat}
+            />
+            <button onClick={handleLogout} className="bottom">Log Out</button>
+        </div>
+    );
   
 };
 
 export default App;
+export {newChatId};
