@@ -46,7 +46,24 @@ const App = () => {
 
     // Handler for logging in, pending login logic
 
-    const handleLogin = (username, password) => {
+    const handleLogin = async (username, password) => {
+
+        // Sample curl request (comment out try-catch if you want to allow login)
+
+        let jsonData = {"userId" : 0, "username": username, "password": password};
+
+        try {
+            let login_response = await fetch("http://134.209.208.225:8080/user/login", {
+                method: 'POST',
+                json: jsonData
+            });
+        } 
+        
+        catch (error) {
+            console.log("failed request!");
+            return;
+        }
+
         setLoggedIn(true);
     };
 
