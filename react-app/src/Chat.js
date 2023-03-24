@@ -1,10 +1,18 @@
+// Imports
+
 import React from 'react';
 
-const Chat = ({ chat, setSelectedChatId }) => {
+// When the user wants to view a chat
+
+const Chat = ({chat, setSelectedChatId}) => {
+
+    // A function to go back to the main screen
+     
     const handleBack = () => {
-        // Set the selected chat to null to go back to the group chat screen
         setSelectedChatId(null);
     };
+
+    // Return chat HTML
     
     return (
         <div className='page'>
@@ -14,7 +22,7 @@ const Chat = ({ chat, setSelectedChatId }) => {
             ))}
             <ul>
                 {chat.messages.map((message) => (
-                    <li key={message.id}>{message.text}</li>
+                    <li key={message.id}>{message.user}+": "+{message.text}</li>
                 ))}
             </ul>
             <button onClick={handleBack}>Back</button>

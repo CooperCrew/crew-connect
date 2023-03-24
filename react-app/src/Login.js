@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
-import './style.css';
+// Imports
 
-const Login = ({ onLogin }) => {
+import React, { useState } from 'react';
+import './index.css';
+
+// Login Screen
+
+const Login = ({onLogin}) => {
+
+    // Variables for logging in and creating an account
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
+    // Login handler
+
     const handleLogin = () => {
         onLogin(username, password);
     };
+
+    // Account creation handler
 
     const handleCreateAccount = (event) => {
         event.preventDefault();
@@ -21,10 +32,14 @@ const Login = ({ onLogin }) => {
         
         setIsCreatingAccount(false);
     };
+
+    // Toggle for the screen for creating an account
     
     const toggleCreateAccount = () => {
         setIsCreatingAccount(!isCreatingAccount);
     };
+
+    // HTML for login and account creation screens
 
     return (
         <div className="container">
