@@ -67,7 +67,7 @@ code {
 .page button {
   padding: 10px;
   border-radius: 5px;
-  margin-left: 10px;
+  margin-left: 0px;
   border: none;
   background-color: #7e46f4;
   color: #fff;
@@ -143,4 +143,12 @@ code {
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-right: 20px;
+}
+
+/* Log Out Button Positioning */
+
+.log-out {
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 10px;
 }

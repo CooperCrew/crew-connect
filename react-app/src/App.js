@@ -6,6 +6,10 @@ import ChatList from './ChatList';
 import Chat from './Chat';
 import NewChat from './NewChat';
 
+// External variable declarations
+
+let newChatId = 1; // ID used for new chats
+
 // Main application
 
 const App = () => {
@@ -37,10 +41,9 @@ const App = () => {
     // Handler for creating a new chat
 
     const handleCreateChat = (users, name) => {
-        const newChatId = Math.max(...chats.map((chat) => chat.id)) + 1;
         const newChat = { id: newChatId, users, name, messages: [] };
         setChats([...chats, newChat]);
-        setSelectedChatId(newChatId);
+        setSelectedChatId(newChatId++);
     };
 
     // Showing the login page
@@ -69,13 +72,11 @@ const App = () => {
                 chats={chats}
                 onSelect={handleSelectChat}
             />
-            {selectedChatId && (
-                <Chat chat={chats.find((chat) => chat.id === selectedChatId)} setSelectedChatId={setSelectedChatId} />
-            )}
-            <button onClick={handleLogout}>Log Out</button>
+            <button onClick={handleLogout} className="log-out">Log Out</button>
         </div>
     );
   
 };
 
 export default App;
+export {newChatId};

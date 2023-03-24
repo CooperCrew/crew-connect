@@ -17,9 +17,11 @@ const Chat = ({chat, setSelectedChatId}) => {
     return (
         <div className='page'>
             <h1>{chat.name}</h1>
-            {chat.users.map((user) => (
-               <h4>{user}</h4>
-            ))}
+            <h4>Members:&ensp;
+                {chat.users.map((user) => (
+                <span>{user}&emsp;</span>
+                ))}
+            </h4>
             <ul>
                 {chat.messages.map((message) => (
                     <li key={message.id}>{message.user}+": "+{message.text}</li>

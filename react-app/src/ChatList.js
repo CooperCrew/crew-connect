@@ -10,11 +10,12 @@ const ChatList = ({chats, onSelect}) => {
 
     return (
         <div className='page'>
-            <h4>Your Chats</h4>
+            <h3>Your Chats</h3>
                 {chats.map((chat) => (
                     <button key={chat.id} onClick={() => onSelect(chat.id)}>
                         {chat.name}
                     </button>
+                    
                 ))}
         </div>
     );

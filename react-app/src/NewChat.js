@@ -2,6 +2,7 @@
 
 import React, {useState} from 'react';
 import './index.css'
+import { newChatId } from './App.js';
 
 // Prop for popup
 
@@ -23,7 +24,7 @@ const NewChat = ({onCreate}) => {
     // Variable declarations
 
     const [users, setUsers] = useState([]);
-    const [name, setName] = useState("My Chat");
+    const [name, setName] = useState("My Chat " + (newChatId));
     const [isOpen, setIsOpen] = useState(false);
 
     // Function for toggling the popup
