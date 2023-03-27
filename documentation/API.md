@@ -8,7 +8,10 @@ jsonData: username, password
 ```
 
 *Get User By UserID*
-<p>Theoretically this should be user/id/{id} for consistency, might change later</p>
+
+<p>Theoretically this should be user/id/{id} for consistency, might change later
+</p>
+
 ```
 /user/{id}
 method: get
@@ -101,7 +104,10 @@ method: delete
 ```
 
 *Get All Messages In GroupChat*
-<p>(in hindsight, seems better to only get a certain amount of messages at a time)</p>
+
+<p>(in hindsight, seems better to only get a certain amount of messages at a time)
+</p>
+
 ```
 /message/groupID/{id}
 method: get
@@ -122,7 +128,10 @@ method: post
 ```
 
 *Insert Groupchat*
-<p>this one is kinda inconsistent with the rest, so maybe subject to change ( dont implement yet? )</p>
+
+<p>this one is kinda inconsistent with the rest, so maybe subject to change ( dont implement yet? )
+</p>
+
 ```
 /groupchat/newGroupName/{groupname}/size/{size}/date/{date}
 method: post
