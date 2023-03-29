@@ -21,6 +21,7 @@ import com.coopercrew.crewconnect.User;
 import com.coopercrew.crewconnect.UserDAO;
 
 @RestController
+@CrossOrigin(origins = "http://142.93.251.255:8080")
 public class UserController {
     String hostname = "db";
     // find user by user id

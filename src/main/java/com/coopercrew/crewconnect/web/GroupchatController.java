@@ -20,6 +20,7 @@ import com.coopercrew.crewconnect.DatabaseConnectionManager;
 import com.coopercrew.crewconnect.*;
 
 @RestController
+@CrossOrigin(origins = "http://142.93.251.255:8080")
 public class GroupchatController {
     String hostname = "db";
 
