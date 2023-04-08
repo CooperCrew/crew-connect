@@ -20,17 +20,17 @@ public class MessageController {
     String hostname = "db";
     
 
-    @GetMapping("/message/{id}")
-	public Message getmessageID(@PathVariable long id) {
+    @GetMapping("/message/{message_id}")
+	public Message getmessageID(@PathVariable long message_id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
 				Message message = new Message();
-				System.out.println(id);
+				System.out.println(message_id);
         try {
             Connection connection = dcm.getConnection();
             MessageDAO messageDAO = new MessageDAO(connection);
 
-            message = messageDAO.findById(id);
+            message = messageDAO.findById(message_id);
 			
             System.out.println(message);
         }
@@ -41,7 +41,7 @@ public class MessageController {
 }
 
 
-    @GetMapping("/message")
+    @GetMapping("/message/{content}")
     public Message findByMessage(@PathVariable String content) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
@@ -80,15 +80,15 @@ public class MessageController {
 
 
 
-    @DeleteMapping("/message/{id}") 
-    public void DeleteMessagebyID(@PathVariable long id) {
+    @DeleteMapping("/message/{message_id}") 
+    public void DeleteMessagebyID(@PathVariable long message_id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
             MessageDAO messageDAO = new MessageDAO(connection);
 
-            messageDAO.deleteByMessageId(id);
+            messageDAO.deleteByMessageId(message_id);
             
             }
         catch(SQLException e) {
@@ -117,7 +117,7 @@ public class MessageController {
         return messages;
     }
 
-    @GetMapping("/message/groupname/{id}")
+    @GetMapping("/users/{user_id}/messages")
     public ArrayList<Message> getMessagesFromUser(@PathVariable long id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");

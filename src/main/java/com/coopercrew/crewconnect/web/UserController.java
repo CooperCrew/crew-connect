@@ -26,16 +26,16 @@ import com.coopercrew.crewconnect.UserDAO;
 public class UserController {
     String hostname = "db";
     // find user by user id
-    @GetMapping("/user/{id}")
-	public User getUserID(@PathVariable long id) {
+    @GetMapping("/user/id/{user_id}")
+	public User getUserID(@PathVariable long user_id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
 				User user = new User();
-				System.out.println(id);
+				System.out.println(user_id);
         try {
             Connection connection = dcm.getConnection();
             UserDAO userDAO = new UserDAO(connection);
-            user = userDAO.findById(id);
+            user = userDAO.findById(user_id);
             System.out.println(user);
         }
         catch(SQLException e) {
@@ -111,14 +111,14 @@ public class UserController {
         return user;
     }
     // update email
-    @PutMapping("user/{id}/updateEmail/{email}")
-    public void updateEmail(@PathVariable long id, @PathVariable String email){
+    @PutMapping("user/updateEmail")
+    public void updateEmail(@RequestBody User updateUser){
     DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
         "crewconnect3", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.updateUserEmail(email, id);
+            userDAO.updateUserEmail(updateUser.getEmail(), updateUser.getUserId());
         }
         catch(SQLException e) {
             e.printStackTrace();
@@ -140,14 +140,14 @@ public class UserController {
         
         }
     // update password
-    @PutMapping("user/{id}/updatePassword/{password}")
-    public void updatePssword(@PathVariable long id, @PathVariable String password){
+    @PutMapping("user/updatePassword")
+    public void updatePssword(@RequestBody User updatePass){
     DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
         "crewconnect3", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
             UserDAO userDAO = new UserDAO(connection);
-            userDAO.updateUserPassword(password, id);
+            userDAO.updateUserPassword(updatePass.getPassword(), updatePass.getUserId());
             
         }
         catch(SQLException e) {
@@ -169,15 +169,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/message/id/{id}")
-    public ArrayList<User> getUsersFromGroupChat(@PathVariable long id) {
+    @GetMapping("/groupchats/{groupchat_id}/users")
+    public ArrayList<User> getUsersFromGroupChat(@PathVariable long groupchat_id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
                 "crewconnect3", "postgres", "password");
         ArrayList<User> Users = new ArrayList<User>();
         try {
             Connection connection = dcm.getConnection();
             JoinsDAO joinsDAO = new JoinsDAO(connection);
-            Users = joinsDAO.getAllUsersInGroupChat(id);
+            Users = joinsDAO.getAllUsersInGroupChat(groupchat_id);
         }
         catch(SQLException e) {
             e.printStackTrace();
