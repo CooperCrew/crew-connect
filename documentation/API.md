@@ -9,11 +9,10 @@ jsonData: username, password
 
 *Get User By UserID*
 
-<p>Theoretically this should be user/id/{id} for consistency, might change later
-</p>
+
 
 ```
-/user/{id}
+/user/id/{id}
 method: get
 ```
 
@@ -41,8 +40,9 @@ json data: username, password, email, status
 
 *Update Email (LOW PRIORITY)*
 ```
-/user/{id}/updateEmail/{email}
+/user/updateEmail
 method: put
+json data: userId, email
 ```
 
 *Update Status*
@@ -55,8 +55,9 @@ method: put
 *Update Password (password is spelled wrong in controller)*
 
 ```
-user/{id}/updatePassword/{password}
+user/updatePassword
 method: post
+json data : userId, password
 ```
 
 *Delete User*
@@ -69,7 +70,7 @@ method: delete
 *Get All Users From GroupChat*
 
 ```
-/message/id/{id}
+/groupchats/{groupchat_id}/users
 method: get
 Will return an array of users!
 ```
@@ -77,14 +78,14 @@ Will return an array of users!
 *Get Message By Message ID*
 
 ```
-/message/{id}
+/message/{message_id}
 method: get
 ```
 
 *Find By Message Content (LOW PRIORITY, seems incomplete in controller, line 42)*
 
 ```
-/message/{message} (it's just /message in controller??)
+/message/{content} 
 method: get
 ```
 
@@ -99,7 +100,7 @@ json data: groupchat id, user id, time sent, message content
 *Delete by Message ID*
 
 ```
-/message/{id}
+/message/{message_id}
 method: delete
 ```
 
@@ -116,7 +117,7 @@ method: get
 *Get All Messages From User (uh why is it /grouname/{id} ? it should be /user/{id})*
 
 ```
-/message/groupname/{id}
+/users/{user_id}/messages
 method: get
 ```
 
@@ -133,21 +134,28 @@ method: post
 </p>
 
 ```
-/groupchat/newGroupName/{groupname}/size/{size}/date/{date}
+/groupchat
 method: post
+IT HAS TO BE IN THIS EXACT CAMELCASING!
+json data : groupName, groupSize, dateCreated
 ```
 
 *Get GroupChat By Group Name*
 
 ```
-/groupchat/{groupname}
+/groupchat/name/{groupname}
 method: get
 ```
+*Get Groupchat by Id*
 
+```
+/groupchat/id/{group_id}
+method: post
+```
 *Delete Groupchat*
 
 ```
-/groupchat/{id}
+/groupchat/id/{group_id}
 method: delete
 ```
 
@@ -182,14 +190,14 @@ method: get
 *Add a User To A GroupChat*
 
 ```
-/groupchat/gcId1/{gcId}/userId1/{userId}
+/groupchat/gcId/{gcId}/userId/{userId}
 method: put
 ```
 
 *Remove User From GroupChat*
 
 ```
-/groupchat/gcId2/{gcId}/userId2/{userId}
+/groupchat/gcId/{gcId}/userId/{userId}
 method: delete
 ```
 
