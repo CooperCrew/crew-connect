@@ -113,7 +113,16 @@ method: delete
 /message/groupID/{id}
 method: get
 ```
-
+*Get Latest N Messages In GroupChat*
+```
+/message/groupID/{id}/limit/{limit}
+method: get
+```
+*Get Latest N Messages In GroupChat with Offset*
+```
+/message/groupID/{id}/limit/{limit}/offset/{offset}
+method: get
+```
 *Get All Messages From User (uh why is it /grouname/{id} ? it should be /user/{id})*
 
 ```
