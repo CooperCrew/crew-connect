@@ -9,7 +9,7 @@ public class MessageDAO extends DataAccessObject{
     private static final String GET_BY_MESSAGE_CONTENT = "SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE message = ? ";
     private static final String DELETE_MESSAGE_BY_ID = "DELETE FROM messages WHERE msg_id = ?";
     private static final String DELETE_MESSAGE_BY_CONTENT = "DELETE FROM messages WHERE message = ?";
-    private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?);";
+    private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?);";   
     public MessageDAO(Connection connection) {
         super(connection);
     }

@@ -25,28 +25,6 @@ import com.coopercrew.crewconnect.*;
 public class GroupchatController {
     String hostname = "db";
 
-    // get by groupchat ID
-    @GetMapping("/groupchat/id/{id}")
-	public Groupchat getGC(@PathVariable long id) {
-        System.out.print(id);
-
-        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
-                "crewconnect3", "postgres", "password");
-				Groupchat groupChat = new Groupchat();
-				System.out.println(id);
-        try {
-            Connection connection = dcm.getConnection();
-            GroupchatDAO groupChatD = new GroupchatDAO(connection);
-                
-            groupChat = groupChatD.findByGroupChatId(id);
-			
-            System.out.println(groupChat);
-        }
-        catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return groupChat;
-    }
 
     // insert groupchat
     @PostMapping("/groupchat")

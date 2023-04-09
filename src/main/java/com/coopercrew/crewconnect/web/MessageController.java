@@ -116,6 +116,45 @@ public class MessageController {
         }
         return messages;
     }
+    @GetMapping("/message/groupID/{id}/limit/{limit}")
+    public ArrayList<Message> findByMessage(@PathVariable long id, @PathVariable int limit) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        ArrayList<Message> messages = new ArrayList<Message>();
+        try {
+            Connection connection = dcm.getConnection();
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+            messages = joinsDAO.getMessagesInGroupChat(id, limit);
+            
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        for(Message a: messages) {
+                System.out.println(a);
+        }
+        return messages;
+    }
+
+    @GetMapping("/message/groupID/{id}/limit/{limit}/offset/{offset}")
+    public ArrayList<Message> findByMessage(@PathVariable long id, @PathVariable int limit, @PathVariable int offset) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+                "crewconnect3", "postgres", "password");
+        ArrayList<Message> messages = new ArrayList<Message>();
+        try {
+            Connection connection = dcm.getConnection();
+            JoinsDAO joinsDAO = new JoinsDAO(connection);
+            messages = joinsDAO.getMessagesInGroupChat(id, limit, offset);
+            
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+        }
+        for(Message a: messages) {
+                System.out.println(a);
+        }
+        return messages;
+    }
 
     @GetMapping("/users/{user_id}/messages")
     public ArrayList<Message> getMessagesFromUser(@PathVariable long id) {

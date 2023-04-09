@@ -23,6 +23,10 @@ public class JoinsDAO extends DataAccessObject{
             " where ugc.gc_id = ?";
     public static final String GET_ALL_MESSAGES_IN_GROUPCHAT = "SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN"  +
             " groupchats g ON g.gc_id = m.gc_id where m.gc_id = ?";
+    public static final String GET_LATEST_MESSAGES_IN_GROUPCHAT  = "SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN"  +
+    " groupchats g ON g.gc_id = m.gc_id where m.gc_id = ? ORDER BY m.time_sent DESC LIMIT ?";
+    public static final String GET_LATEST_MESSAGES_IN_GROUPCHAT_OFFSET = "SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN"  +
+    " groupchats g ON g.gc_id = m.gc_id where m.gc_id = ? ORDER BY m.time_sent DESC LIMIT ? OFFSET ?";
     public ArrayList<Groupchat> getAllGroupChatsWithUser(long id){
         Groupchat groupchat = new Groupchat();
         ArrayList<Groupchat> groupchatList = new ArrayList<Groupchat>();
@@ -112,5 +116,61 @@ public class JoinsDAO extends DataAccessObject{
         }
         return messageList;
     }
+
+    public ArrayList<Message> getMessagesInGroupChat(long id, int limit){
+        // Group Chat ID
+
+
+        Message message = new Message();
+        ArrayList<Message> messageList = new ArrayList<Message>();
+        try (PreparedStatement statement = this.connection.prepareStatement(GET_LATEST_MESSAGES_IN_GROUPCHAT);) {
+            statement.setLong(1, id);
+            statement.setInt(2, limit);
+
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()) {
+                message = new Message();
+                message.setMessageId(rs.getLong("msg_id"));
+                message.setGroupChatId(rs.getLong("gc_id"));
+                message.setTimeSent(rs.getLong("time_sent"));
+                message.setMessage(rs.getString("message"));
+                message.setUserId(rs.getLong("user_id"));
+                messageList.add(message);
+                
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return messageList;
+    }
+    public ArrayList<Message> getMessagesInGroupChat(long id, int limit, int offset){
+        // Group Chat ID
+
+
+        Message message = new Message();
+        ArrayList<Message> messageList = new ArrayList<Message>();
+        try (PreparedStatement statement = this.connection.prepareStatement(GET_LATEST_MESSAGES_IN_GROUPCHAT_OFFSET);) {
+            statement.setLong(1, id);
+            statement.setInt(2, limit);
+            statement.setLong(3, offset);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()) {
+                message = new Message();
+                message.setMessageId(rs.getLong("msg_id"));
+                message.setGroupChatId(rs.getLong("gc_id"));
+                message.setTimeSent(rs.getLong("time_sent"));
+                message.setMessage(rs.getString("message"));
+                message.setUserId(rs.getLong("user_id"));
+                messageList.add(message);
+                
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return messageList;
+    }
+    
     
 }
