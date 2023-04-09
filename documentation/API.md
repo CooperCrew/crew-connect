@@ -130,12 +130,6 @@ method: get
 method: get
 ```
 
-*Find GroupChat by GroupChat ID*
-
-```
-/groupchat/id/{id}
-method: post
-```
 
 *Insert Groupchat*
 
@@ -192,7 +186,7 @@ method: put
 *Get All Users From A GroupChat*
 
 ```
-/groupchats/id/{id}
+/groupchats/userId/{id}
 method: get
 ```
 
