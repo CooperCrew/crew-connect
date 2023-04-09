@@ -1,5 +1,3 @@
-// Imports
-
 import React, {useState} from 'react';
 
 // Renderer for list of Messages
@@ -86,14 +84,11 @@ const Chat = ({chat, setSelectedChatId, onSendMessage}) => {
         if (message === "") {
             return;
         }
-
         onSendMessage(message);
-
         const newMessage = {
             sender: "you",
             text: message            
         };
-
         chat.messages=[...chat.messages, newMessage];
         setMessage("");
     };
