@@ -6,8 +6,8 @@
 --                        2) mkdir -p ~/srv/postgres
 --                        3) docker run --rm --name lil-postgres -e POSTGRES_PASSWORD=password -d -v $HOME/srv/postgres:/var/lib/postgresql/data -p 5432:5432 postgres
 -- 4) RUN POSTGRES USING THIS COMMAND. PASSWORD IS password: psql -h localhost -U postgres
--- 5) ENTER THIS COMMAND ONCE LOGGED IN: CREATE DATABASE crewconect3;
--- 6) ENTER THIS COMMAND ONCE YOU CREATED THE DATABASE: \c crewconect3
+-- 5) ENTER THIS COMMAND ONCE LOGGED IN: CREATE DATABASE crewconnect3;
+-- 6) ENTER THIS COMMAND ONCE YOU CREATED THE DATABASE: \c crewconnect3
 -- 7) COPY AND PASTE EVERYTHING BELOW AND EVERYTHING SHOULD BE SET UP!
 
 
@@ -53,6 +53,27 @@ CREATE TABLE users_gc (
     PRIMARY KEY (gc_id, user_id)
 );
 
+CREATE SEQUENCE server_seq START WITH 1;
+
+CREATE TABLE servers (
+    server_id bigint NOT NULL DEFAULT nextval('server_seq'),
+    server_name varchar(50) NOT NULL,
+    PRIMARY KEY (server_id)
+);
+
+
+-- we only primary key on gc_id because a groupchat should not be able to exist
+-- in two servers at once. Therefore, only one of each groupchat should exist in
+-- this table.
+CREATE TABLE server_groupchats (
+    server_id bigint NOT NULL,
+    gc_id bigint NOT NULL,
+    FOREIGN KEY (server_id) REFERENCES servers(server_id) ON DELETE CASCADE,
+    FOREIGN KEY (gc_id) REFERENCES groupchats(gc_id) ON DELETE CASCADE,
+    PRIMARY KEY (gc_id)
+);
+
+
 -- Populate users table
 INSERT INTO users (username, password, email, status)
 VALUES
@@ -95,3 +116,16 @@ VALUES
 (3, 1, 1672617600, 'Hello GroupChat3!'),
 (3, 3, 1672617600, 'Hi User1!'),
 (3, 4, 1672617600, 'Greetings everyone!');
+
+-- Populate servers table
+INSERT INTO servers (server_name)
+VALUES
+('Server1'),
+('Server2');
+
+-- Populate server_groupchats table
+INSERT INTO server_groupchats (server_id, gc_id)
+VALUES
+(1, 1),
+(1, 2),
+(2, 3);
