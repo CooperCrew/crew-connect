@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #313338;
+  background-color: #ffffff;
 }
 
 code {
@@ -13,7 +13,7 @@ code {
     monospace;
 }
 
-/* Container Styling */
+/* Container Styling
 
 .container {
   display: flex;
@@ -34,7 +34,7 @@ code {
 
 /* Form Styling */
 
-.form {
+/* .form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,7 +64,7 @@ code {
 
 /* Page Styling */
 
-.page {
+/* .page {
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -93,16 +93,16 @@ code {
 
 /* Chat List Styling */
 
-.list button {
+/* .list button {
   display: flex;
   margin-bottom: 15px;
   padding: 15px 100px;
   flex-direction: column;
-}
+} */
 
 /* Styles for pop-ups */
 
-.popup-box {
+/* .popup-box {
   position: fixed;
   background: #00000050;
   width: 100%;
@@ -161,12 +161,12 @@ code {
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-right: 20px;
-}
+} */
 
 /* Bottom Button Positioning */
 
-.bottom {
+/* .bottom {
   position: absolute;
   bottom: 0;
   margin-bottom: 10px;
-}
+} */
