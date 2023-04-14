@@ -37,34 +37,9 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [chatName, setChatName] = useState("My Chat ");
     const [isOpen, setIsOpen] = useState(false);
+    const [messageText, setMessageText] = useState('');
 
     const theme = createTheme();
-    // use effect hook for login
-    // useEffect(() => {
-    //     if (!inputUsername || !inputPassword) return;
-    
-    //     let jsonData = {"username": inputUsername, "password": inputPassword};
-    //     console.log(jsonData);
-    //     fetch(`/user/login`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: JSON.stringify(jsonData)
-    //     }).then(async response => {
-    //         const data = await response.json();
-    //         console.log(data);
-    //         if (!response.ok) {
-    //             const error = (data && data.message) || response.statusText;
-    //             return console.error(error);
-    //         } else {
-    //             setLoggedIn(true);
-    //             setId(data["userId"]); // Update this line to use setId
-    //             console.log(id);
-    //         }
-    //     });
-    
-    // }, [inputUsername, inputPassword]);
 
     // new useeffect hook for signing in with firebase auth
     useEffect(() => {
@@ -289,11 +264,9 @@ const App = () => {
     };
 
     const handleNewMessageChange = (event) => {
-
         if (event.target.value === "") {
             return;
         }
-
         setMessage(event.target.value);
     };
 
@@ -382,7 +355,7 @@ const App = () => {
                     </List>
                 </Grid>
                 <Grid item xs={9}>
-                    <h3>{chats.find((chat) => chat.id === selectedChatId).name}</h3>
+                    <h3>{chats.find((chat) => chat.id === selectedChatId)?.name}</h3>
                     <List>
                         {selectedChatId && (
                             <Grid container>
@@ -402,9 +375,9 @@ const App = () => {
                                         onKeyPress={handleKeyPress} 
                                     fullWidth />
                                 </Grid>
-                                <Grid xs={1} align="right">
+                                {/* <Grid xs={1} align="right">
                                     <Fab color="primary" aria-label="add" onClick={handleSendMessage}><SendIcon /></Fab>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                         )}
                     </List>
