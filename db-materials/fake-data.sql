@@ -40,3 +40,16 @@ VALUES
 (3, 1, 1672617600, 'Hello GroupChat3!'),
 (3, 3, 1672617600, 'Hi User1!'),
 (3, 4, 1672617600, 'Greetings everyone!');
+
+-- Populate servers table
+INSERT INTO servers (server_name, date_created)
+VALUES
+('Server1', '2023-01-01'),
+('Server2', '2023-02-01');
+
+-- Populate server_groupchats table
+INSERT INTO server_groupchats (server_id, gc_id)
+VALUES
+(1, 1),
+(1, 2),
+(2, 3);

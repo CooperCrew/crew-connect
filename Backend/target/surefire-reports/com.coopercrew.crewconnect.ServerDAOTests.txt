@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.coopercrew.crewconnect.ServerDAOTests
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 2, Errors: 1, Skipped: 0, Time elapsed: 0.152 s <<< FAILURE! - in com.coopercrew.crewconnect.ServerDAOTests
+getGroupChatsByServerId  Time elapsed: 0.021 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <1> but was: <0>
+	at com.coopercrew.crewconnect.ServerDAOTests.getGroupChatsByServerId(ServerDAOTests.java:74)
+
+addGroupChatToServer  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "java.lang.Long.longValue()" because the return value of "com.coopercrew.crewconnect.Server.getServerId()" is null
+	at com.coopercrew.crewconnect.ServerDAOTests.addGroupChatToServer(ServerDAOTests.java:56)
+
+findByServerName  Time elapsed: 0.004 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <Server3> but was: <null>
+	at com.coopercrew.crewconnect.ServerDAOTests.findByServerName(ServerDAOTests.java:43)
+
