@@ -1,50 +1,63 @@
 import React, {useState, useEffect} from 'react';
-import { Grid, TextField, List, Divider } from '@mui/material';
+import { Grid, TextField, List, Divider, Link} from '@mui/material';
 import Message from './Message';
 
-const GroupChat = ({ chat, selectedChatId, id, chats, setChats}) => { 
+const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect}) => { 
     const [message, setMessage] = useState('');
 
     const handleSendMessage = async (message) => {
         try {
-            let messageToSend = {
-                groupChatId: selectedChatId,
-                userId: id,
-                message: message,
-                timeSent: Math.floor(Date.now() / 1000),
-                "messageId": 0
-            };
-            console.log(messageToSend);
-            // Send the message to the server
-            const response = await fetch("/message", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(messageToSend),
+          connect();
+          let messageToSend = {
+            groupChatId: selectedChatId,
+            userId: id,
+            message: message,
+            timeSent: Math.floor(Date.now() / 1000),
+            "messageId": 0,
+          };
+    
+          console.log(messageToSend);
+          // Send the message to the server
+          const response = await fetch("/message", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(messageToSend),
+          });
+    
+          if (response.ok) {
+            const data = await response.json();
+            const updatedChats = chats.map((chat) => {
+                if (chat.id === selectedChatId) {
+                return {
+                    ...chat,
+                    messages: [
+                    ...chat.messages,
+                    {
+                        id: data.messageId,
+                        sender: id,
+                        text: message,
+                    },
+                    ],
+                };
+                }
+                return chat;
             });
-            if (response.ok) {
-                const data = await response.json();
-                const updatedChats = chats.map(chat => {
-                    if (chat.id === selectedChatId) {
-                        return {
-                            ...chat,
-                            messages: [...chat.messages, {
-                                id: data.messageId,
-                                sender: id,
-                                text: message
-                            }],
-                        };
-                    }
-                    return chat;
-                });
-                setChats(updatedChats);
-                setMessage('');
-            } else {
-                throw new Error("Error sending message");
-            }
+            setChats(updatedChats);
+             setMessage("");
+    
+            // Send the message through the WebSocket
+            stompClient.send(
+                `/app/message/${selectedChatId}`,
+                {},
+                JSON.stringify(messageToSend)
+            );
+          } else {
+            throw new Error("Error sending message");
+          }
         } catch (error) {
-            console.error("Error sending message:", error);
+          console.error("Error sending message:", error);
         }
     }
 
@@ -87,10 +100,27 @@ const GroupChat = ({ chat, selectedChatId, id, chats, setChats}) => {
         }
     }
 
+    const handleLeave = async () => {
+        try {
+            await fetch(`/groupchat/gcId/${selectedChatId}/userId/${id}`, {
+                method: 'DELETE',
+            });
+            setChats(chats.filter(chat => chat.id !== selectedChatId));
+            setSelectedChatId(null);
+        } catch (error) {
+            console.error("Error leaving group chat:", error);
+        }
+    }
+
     return (
         <Grid item xs={9}>
             <h3>{chat.name}</h3>
                 <List>
+                    <Grid container>
+                        <Link href="#" variant="body2" onClick={handleLeave}>
+                        {"Leave"}
+                        </Link>
+                    </Grid>
                     <Grid container>
                         {chat.messages.map((message, index) => (
                         <Message key={index} message={message} handleDeleteMessage={handleDeleteMessage} />
