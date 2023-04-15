@@ -19,12 +19,37 @@ import Fab from '@mui/material/Fab';
 import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
  import Link from '@mui/material/Link';
-
-
+ import SockJS from 'sockjs-client';
+ import { Stomp } from '@stomp/stompjs';
+var stompClient = null;
 // Main application
+const connect = (groupChatId) => {
+    let Sock = new SockJS('http://localhost:8080/ws');
+    stompClient = Stomp.over(Sock);
+    stompClient.connect({}, onConnect, onError);
+        
+}
+const onConnect= () => {
+    console.log("it connected;");
+stompClient.subscribe('/chatroom/1', console.log("hello"));
+let messageToSend = {
+    groupChatId: 1,
+    userId: 23,
+    message: "hello",
+    timeSent: Math.floor(Date.now() / 1000),
+    "messageId": 0
+};
+
+    stompClient.send("/app/message/1", {}, JSON.stringify(messageToSend));
+}
+const onError = () => {
+    console.log("It failed");
+}
+
+
 
 const App = () => {
-
+    
     // Variable Declarations
     const [loggedIn, setLoggedIn] = useState(false); // Boolean for logging in
     const [selectedChatId, setSelectedChatId] = useState(null); // Integer for chat selection
@@ -38,10 +63,11 @@ const App = () => {
     const [chatName, setChatName] = useState("My Chat ");
     const [isOpen, setIsOpen] = useState(false);
     const [messageText, setMessageText] = useState('');
-
+    
     const theme = createTheme();
-
+    //connect to socket
     // new useeffect hook for signing in with firebase auth
+
     useEffect(() => {
         if (!inputEmail || !inputPassword) return;
     
@@ -134,9 +160,12 @@ const App = () => {
         setInputPassword("");
     };
 
+
     // Handler for clicking on a chat to view it
     const handleSelectChat = (chatId) => {
+       
         setSelectedChatId(chatId);
+        connect(selectedChatId);
     };
 
     // Handler for creating a new chat
