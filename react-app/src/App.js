@@ -3,41 +3,16 @@ import Login from './Login';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut} from 'firebase/auth';
 import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
-
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Grid, AppBar, Toolbar, Typography, Paper, testSX, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText} from '@mui/material';
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
-var stompClient = null;
+// import SockJS from 'sockjs-client';
+// import { Stomp } from '@stomp/stompjs';
 
 // Main application
-const connect = (groupChatId) => {
-    let Sock = new SockJS('http://localhost:8080/ws');
-    stompClient = Stomp.over(Sock);
-    stompClient.connect({}, onConnect, onError);
-        
-}
-const onConnect= () => {
-    console.log("it connected;");
-    stompClient.subscribe('/chatroom/1', console.log("hello"));
-    let messageToSend = {
-    groupChatId: 1,
-    userId: 23,
-    message: "hello",
-    timeSent: Math.floor(Date.now() / 1000),
-    "messageId": 0
-};
-
-    stompClient.send("/app/message/1", {}, JSON.stringify(messageToSend));
-}
-const onError = () => {
-    console.log("It failed");
-}
 
 const App = () => {
     // Variable Declarations
     const [loggedIn, setLoggedIn] = useState(false); // Boolean for logging in
-    const [selectedChatId, setSelectedChatId] = useState(null); // Integer for chat selection
     const [chats, setChats] = useState([]); // List of chats    
     const [inputPassword, setInputPassword] = useState("");
     const [id, setId] = useState(0); // Add this line to manage `id` using useState
@@ -47,6 +22,7 @@ const App = () => {
     const [isOpen, setIsOpen] = useState(false);
     
     const theme = createTheme();
+
     //connect to socket
     // new useeffect hook for signing in with firebase auth
     useEffect(() => {
@@ -110,14 +86,14 @@ const App = () => {
             });
             const data = await response.json();
             const newChats = await Promise.all(data.map(async entry => {
-                const users = await fetchGroupChatUsers(entry["groupChatId"]);
-                const messages = await fetchGroupChatMessages(entry["groupChatId"]);
-                return {
-                    id: entry["groupChatId"],
-                    users,
-                    name: entry["groupName"],
-                    messages,
-                };
+            const users = await fetchGroupChatUsers(entry["groupChatId"]);
+            const messages = await fetchGroupChatMessages(entry["groupChatId"]);
+            return {
+                id: entry["groupChatId"],
+                users,
+                name: entry["groupName"],
+                messages,
+            };
             }));
             setChats(newChats);
         };
@@ -202,17 +178,10 @@ const App = () => {
             }
             const newChat = { id: groupChatId, users, name, messages: [] };
             setChats([...chats, newChat]);
-            setSelectedChatId(groupChatId);
         } catch (error) {
             console.error("Error creating new chat:", error);
         }
     };
-
-
-    // Showing the selected chat
-    if (selectedChatId) {
-        const selectedChat = chats.find((chat) => chat.id === selectedChatId);
-    }
 
     // Function for toggling the popup
     const togglePopup = () => {
