@@ -68,8 +68,8 @@ public class MessageController {
             Connection connection = dcm.getConnection();
             MessageDAO messageDAO = new MessageDAO(connection);
 
-            messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
-            
+           long messageID = messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
+            message.setMessageId(messageID);
             }
         catch(SQLException e) {
             e.printStackTrace();

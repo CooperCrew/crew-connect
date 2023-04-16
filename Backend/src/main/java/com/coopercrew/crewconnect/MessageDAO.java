@@ -9,7 +9,7 @@ public class MessageDAO extends DataAccessObject{
     private static final String GET_BY_MESSAGE_CONTENT = "SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE message = ? ";
     private static final String DELETE_MESSAGE_BY_ID = "DELETE FROM messages WHERE msg_id = ?";
     private static final String DELETE_MESSAGE_BY_CONTENT = "DELETE FROM messages WHERE message = ?";
-    private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?);";   
+    private static final String SEND_MESSAGE = "INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?) RETURNING msg_id";   
     public MessageDAO(Connection connection) {
         super(connection);
     }
@@ -63,13 +63,21 @@ public class MessageDAO extends DataAccessObject{
             throw new RuntimeException(e);
         }
     }
-    public void sendMessage(long gc_id, long user_id, Long time_sent, String message) {
+    public long sendMessage(long gc_id, long user_id, Long time_sent, String message) {
         try(PreparedStatement statement = this.connection.prepareStatement(SEND_MESSAGE);) {
             statement.setLong(1, gc_id);
             statement.setLong(2, user_id);
             statement.setLong(3, time_sent);
             statement.setString(4, message);
-            statement.executeUpdate();
+          //  statement.executeUpdate();
+    ResultSet resultSet = statement.executeQuery();
+    if (resultSet.next()) {
+        long x = resultSet.getLong("msg_id");
+        System.out.println("Message sent id" + x);
+        return x;
+    } else {
+        throw new SQLException("Failed to retrieve message id after insertion.");
+    }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

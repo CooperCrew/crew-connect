@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './index.css';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getAuth } from 'firebase/auth';
 import { auth } from './index';
 
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Paper, Box, Grid, Typography} from '@mui/material'
@@ -52,7 +52,7 @@ const Login = ({onLogin}) => {
             email: email,
             status: "Offline",
           };
-          fetch(`http://142.93.251.255:8080/user/register`, {
+          fetch(`/user/register`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -197,7 +197,7 @@ const Login = ({onLogin}) => {
           <Typography component="h1" variant="h5">
             Create Account
           </Typography>
-          <Box component="form" noValidate onSubmit={handleCreateAccount} sx={{ mt: 1 }}>
+          <Box component="form" noValidate onSubmit={handleCreateAccount} onClick={() => {signOut(getAuth())}} sx={{ mt: 1 }}>
           <TextField
               margin="normal"
               required
