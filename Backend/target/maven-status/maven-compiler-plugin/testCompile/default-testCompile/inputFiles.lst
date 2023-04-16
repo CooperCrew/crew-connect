@@ -1,0 +1,10 @@
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/CrewconnectApplicationTests.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/TestConfiguration.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/UserDAOTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/GroupchatControllerTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/UserControllerTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/ServerControllerTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/ServerDAOTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/GroupchatDAOTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/MessageDAOTest.java
+/home/colin/crew-connect/Backend/src/test/java/com/coopercrew/crewconnect/JoinsDAOTest.java

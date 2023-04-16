@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crewconnect</a> &gt; <a href="index.source.html" class="el_package">com.coopercrew.crewconnect.web</a> &gt; <span class="el_source">ServerController.java</span></div><h1>ServerController.java</h1><pre class="source lang-java linenums">package com.coopercrew.crewconnect.web;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.coopercrew.crewconnect.DatabaseConnectionManager;
+import com.coopercrew.crewconnect.Groupchat;
+import com.coopercrew.crewconnect.Server;
+import com.coopercrew.crewconnect.ServerDAO;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@CrossOrigin
+<span class="fc" id="L24">public class ServerController {</span>
+<span class="fc" id="L25">    String hostname = &quot;localhost:5432&quot;;</span>
+
+    // create a new server - send server name as the json body
+    @PostMapping(&quot;/server&quot;)
+    public void createServer(@RequestBody Server server) {
+<span class="fc" id="L30">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+        try {
+<span class="fc" id="L32">            Connection connection = dcm.getConnection();</span>
+<span class="fc" id="L33">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="fc" id="L34">            serverDAO.createServer(server.getServerName());</span>
+<span class="nc" id="L35">        } catch (SQLException e) {</span>
+<span class="nc" id="L36">            e.printStackTrace();</span>
+<span class="fc" id="L37">        }</span>
+<span class="fc" id="L38">    }</span>
+    // get a server object from server id
+    @GetMapping(&quot;/server/id/{server_id}&quot;)
+    public Server findByServerId(@PathVariable long server_id) {
+<span class="fc" id="L42">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+<span class="fc" id="L43">        Server server = new Server();</span>
+        try {
+<span class="fc" id="L45">            Connection connection = dcm.getConnection();</span>
+<span class="fc" id="L46">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="fc" id="L47">            server = serverDAO.findByServerId(server_id);</span>
+<span class="nc" id="L48">        } catch (SQLException e) {</span>
+<span class="nc" id="L49">            e.printStackTrace();</span>
+<span class="fc" id="L50">        }</span>
+<span class="fc" id="L51">        return server;</span>
+    }
+    // get a server object from server name
+    @GetMapping(&quot;/server/name/{server_name}&quot;)
+    public Server findByServerName(@PathVariable String server_name) {
+<span class="fc" id="L56">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+<span class="fc" id="L57">        Server server = new Server();</span>
+        try {
+<span class="fc" id="L59">            Connection connection = dcm.getConnection();</span>
+<span class="fc" id="L60">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="fc" id="L61">            server = serverDAO.findByServerName(server_name);</span>
+<span class="nc" id="L62">        } catch (SQLException e) {</span>
+<span class="nc" id="L63">            e.printStackTrace();</span>
+<span class="fc" id="L64">        }</span>
+<span class="fc" id="L65">        return server;</span>
+    }
+    // delete a server by server id
+    @DeleteMapping(&quot;/server/id/{server_id}&quot;)
+    public void deleteServer(@PathVariable long server_id) {
+<span class="fc" id="L70">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+        try {
+<span class="fc" id="L72">            Connection connection = dcm.getConnection();</span>
+<span class="fc" id="L73">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="fc" id="L74">            serverDAO.deleteServer(server_id);</span>
+<span class="nc" id="L75">        } catch (SQLException e) {</span>
+<span class="nc" id="L76">            e.printStackTrace();</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">    }</span>
+    // get all groupchats in a server
+    @GetMapping(&quot;/server/{server_id}/groupchats&quot;)
+    public List&lt;Groupchat&gt; getGroupChatsByServerId(@PathVariable long server_id) {
+<span class="nc" id="L82">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+<span class="nc" id="L83">        List&lt;Groupchat&gt; groupchats = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L85">            Connection connection = dcm.getConnection();</span>
+<span class="nc" id="L86">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="nc" id="L87">            groupchats = serverDAO.getGroupChatsByServerId(server_id);</span>
+<span class="nc" id="L88">        } catch (SQLException e) {</span>
+<span class="nc" id="L89">            e.printStackTrace();</span>
+<span class="nc" id="L90">        }</span>
+<span class="nc" id="L91">        return groupchats;</span>
+    }
+    // put a new groupchat into a server
+    @PutMapping(&quot;/server/{server_id}/groupchat/{groupchat_id}&quot;)
+    public void addGroupChatToServer(@PathVariable long server_id, @PathVariable long groupchat_id) {
+<span class="nc" id="L96">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+        try {
+<span class="nc" id="L98">            Connection connection = dcm.getConnection();</span>
+<span class="nc" id="L99">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="nc" id="L100">            serverDAO.addGroupChatToServer(server_id, groupchat_id);</span>
+<span class="nc" id="L101">        } catch (SQLException e) {</span>
+<span class="nc" id="L102">            e.printStackTrace();</span>
+<span class="nc" id="L103">        }</span>
+<span class="nc" id="L104">    }</span>
+    // get all servers a groupchat is a part of
+    @GetMapping(&quot;/servers/userId/{user_id}&quot;)
+    public List&lt;Server&gt; findServersByUserId(@PathVariable long user_id) {
+<span class="nc" id="L108">        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, &quot;crewconnect3&quot;, &quot;postgres&quot;, &quot;password&quot;);</span>
+        List&lt;Server&gt; servers;
+        try {
+<span class="nc" id="L111">            Connection connection = dcm.getConnection();</span>
+<span class="nc" id="L112">            ServerDAO serverDAO = new ServerDAO(connection);</span>
+<span class="nc" id="L113">            servers = serverDAO.findServersByUserId(user_id);</span>
+<span class="nc" id="L114">        } catch (SQLException e) {</span>
+<span class="nc" id="L115">            e.printStackTrace();</span>
+<span class="nc" id="L116">            throw new RuntimeException(e);</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">        return servers;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

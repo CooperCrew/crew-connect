@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JoinsDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crewconnect</a> &gt; <a href="index.source.html" class="el_package">com.coopercrew.crewconnect</a> &gt; <span class="el_source">JoinsDAO.java</span></div><h1>JoinsDAO.java</h1><pre class="source lang-java linenums">package com.coopercrew.crewconnect;
+import com.coopercrew.crewconnect.util.DataAccessObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+public class JoinsDAO extends DataAccessObject{
+    public JoinsDAO(Connection connection) {
+<span class="fc" id="L10">        super(connection);</span>
+<span class="fc" id="L11">    }</span>
+    // public static final String GET_BY_GROUPCHAT_ID = &quot;SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE gc_id = ?&quot;;
+    // public static final String GET_BY_GROUPNAME = &quot;SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE group_name = ?&quot;;
+    // public static final String GET_BY_GROUPSIZE = &quot;SELECT gc_id, group_name, group_size, date_created FROM groupchats WHERE group_size = ?&quot;;
+    // public static final String DELETE_BY_GROUPCHAT_ID = &quot;DELETE from groupchats WHERE gc_id = ?&quot;;
+    // public static final String UPDATE_GROUPCHAT_SIZE = &quot;UPDATE groupchats SET group_size = ? WHERE gc_id = ?&quot;;
+    // public static final String UPDATE_GROUPCHAT_NAME = &quot;UPDATE groupchats SET group_name = ? WHERE gc_id = ?&quot;;
+    public static final String GET_ALL_GROUPCHATS_WITH_USER = &quot;SELECT g.group_name, g.gc_id, g.group_size, g.date_created FROM groupchats g JOIN users_gc ugc ON&quot; +
+            &quot; g.gc_id = ugc.gc_id where ugc.user_id = ?&quot;;
+    public static final String GET_ALL_MESSAGES_FROM_USER = &quot;SELECT m.gc_id, m.user_id, m.msg_id, m.message, m.time_sent FROM messages m JOIN&quot; +
+            &quot; users u ON u.user_id = m.user_id where m.user_id = ?&quot;;
+    public static final String GET_ALL_USERS_IN_GROUPCHAT = &quot;SELECT u.username, u.user_id, u.email, u.status FROM users u JOIN users_gc ugc ON u.user_id = ugc.user_id&quot; +
+            &quot; where ugc.gc_id = ?&quot;;
+    public static final String GET_ALL_MESSAGES_IN_GROUPCHAT = &quot;SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN&quot;  +
+            &quot; groupchats g ON g.gc_id = m.gc_id where m.gc_id = ?&quot;;
+    public static final String GET_LATEST_MESSAGES_IN_GROUPCHAT  = &quot;SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN&quot;  +
+    &quot; groupchats g ON g.gc_id = m.gc_id where m.gc_id = ? ORDER BY m.time_sent DESC LIMIT ?&quot;;
+    public static final String GET_LATEST_MESSAGES_IN_GROUPCHAT_OFFSET = &quot;SELECT m.gc_id, m.msg_id, m.message, m.time_sent, m.user_id FROM messages m JOIN&quot;  +
+    &quot; groupchats g ON g.gc_id = m.gc_id where m.gc_id = ? ORDER BY m.time_sent DESC LIMIT ? OFFSET ?&quot;;
+    public ArrayList&lt;Groupchat&gt; getAllGroupChatsWithUser(long id){
+<span class="fc" id="L31">        Groupchat groupchat = new Groupchat();</span>
+<span class="fc" id="L32">        ArrayList&lt;Groupchat&gt; groupchatList = new ArrayList&lt;Groupchat&gt;();</span>
+<span class="fc" id="L33">        try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_GROUPCHATS_WITH_USER);) {</span>
+<span class="fc" id="L34">            statement.setLong(1, id);</span>
+<span class="fc" id="L35">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L37">                groupchat = new Groupchat();</span>
+<span class="fc" id="L38">                groupchat.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L39">                groupchat.setGroupName(rs.getString(&quot;group_name&quot;));</span>
+<span class="fc" id="L40">                groupchat.setGroupSize(rs.getInt(&quot;group_size&quot;));</span>
+<span class="fc" id="L41">                groupchat.setDateCreated(rs.getString(&quot;date_created&quot;));</span>
+<span class="fc" id="L42">                groupchatList.add(groupchat);</span>
+            }
+<span class="nc" id="L44">        } catch(SQLException e) {</span>
+<span class="nc" id="L45">            e.printStackTrace();</span>
+<span class="nc" id="L46">            throw new RuntimeException(e);</span>
+<span class="fc" id="L47">        }</span>
+<span class="fc" id="L48">        return groupchatList;</span>
+    }
+
+    public ArrayList&lt;Message&gt; getMessagesFromUser(long id){
+<span class="fc" id="L52">        Message message = new Message();</span>
+<span class="fc" id="L53">        ArrayList&lt;Message&gt; messageList = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L54">        try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_MESSAGES_FROM_USER);) {</span>
+<span class="fc" id="L55">            statement.setLong(1, id);</span>
+<span class="fc" id="L56">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc" id="L57">            System.out.println(rs);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L59">                message = new Message();</span>
+<span class="fc" id="L60">                message.setMessageId(rs.getLong(&quot;msg_id&quot;));</span>
+<span class="fc" id="L61">                message.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L62">                message.setTimeSent(rs.getLong(&quot;time_sent&quot;));</span>
+<span class="fc" id="L63">                message.setMessage(rs.getString(&quot;message&quot;));</span>
+<span class="fc" id="L64">                message.setUserId(rs.getLong(&quot;user_id&quot;));</span>
+<span class="fc" id="L65">                messageList.add(message);</span>
+            }
+<span class="nc" id="L67">        } catch(SQLException e) {</span>
+<span class="nc" id="L68">            e.printStackTrace();</span>
+<span class="nc" id="L69">            throw new RuntimeException(e);</span>
+<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">        return messageList;</span>
+    }
+
+    public ArrayList&lt;User&gt; getAllUsersInGroupChat(long id){
+<span class="fc" id="L75">        ArrayList&lt;User&gt; userList = new ArrayList&lt;User&gt;();</span>
+<span class="fc" id="L76">        try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_USERS_IN_GROUPCHAT);) {</span>
+<span class="fc" id="L77">            statement.setLong(1, id);</span>
+<span class="fc" id="L78">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L80">                User user = new User();</span>
+<span class="fc" id="L81">                user.setUserId(rs.getLong(&quot;user_id&quot;));</span>
+<span class="fc" id="L82">                user.setUsername(rs.getString(&quot;username&quot;));</span>
+<span class="fc" id="L83">                user.setEmail(rs.getString(&quot;email&quot;));</span>
+<span class="fc" id="L84">                user.setStatus(rs.getString(&quot;status&quot;));</span>
+<span class="fc" id="L85">                userList.add(user);</span>
+<span class="fc" id="L86">            }</span>
+<span class="nc" id="L87">        } catch(SQLException e) {</span>
+<span class="nc" id="L88">            e.printStackTrace();</span>
+<span class="nc" id="L89">            throw new RuntimeException(e);</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">        return userList;</span>
+    }
+
+    public ArrayList&lt;Message&gt; getMessagesInGroupChat(long id){
+        // Group Chat ID
+
+
+<span class="fc" id="L98">        Message message = new Message();</span>
+<span class="fc" id="L99">        ArrayList&lt;Message&gt; messageList = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L100">        try (PreparedStatement statement = this.connection.prepareStatement(GET_ALL_MESSAGES_IN_GROUPCHAT);) {</span>
+<span class="fc" id="L101">            statement.setLong(1, id);</span>
+<span class="fc" id="L102">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L104">                message = new Message();</span>
+<span class="fc" id="L105">                message.setMessageId(rs.getLong(&quot;msg_id&quot;));</span>
+<span class="fc" id="L106">                message.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L107">                message.setTimeSent(rs.getLong(&quot;time_sent&quot;));</span>
+<span class="fc" id="L108">                message.setMessage(rs.getString(&quot;message&quot;));</span>
+<span class="fc" id="L109">                message.setUserId(rs.getLong(&quot;user_id&quot;));</span>
+<span class="fc" id="L110">                messageList.add(message);</span>
+                
+            }
+<span class="nc" id="L113">        } catch(SQLException e) {</span>
+<span class="nc" id="L114">            e.printStackTrace();</span>
+<span class="nc" id="L115">            throw new RuntimeException(e);</span>
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">        return messageList;</span>
+    }
+
+    public ArrayList&lt;Message&gt; getMessagesInGroupChat(long id, int limit){
+        // Group Chat ID
+
+
+<span class="fc" id="L124">        Message message = new Message();</span>
+<span class="fc" id="L125">        ArrayList&lt;Message&gt; messageList = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L126">        try (PreparedStatement statement = this.connection.prepareStatement(GET_LATEST_MESSAGES_IN_GROUPCHAT);) {</span>
+<span class="fc" id="L127">            statement.setLong(1, id);</span>
+<span class="fc" id="L128">            statement.setInt(2, limit);</span>
+
+<span class="fc" id="L130">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L132">                message = new Message();</span>
+<span class="fc" id="L133">                message.setMessageId(rs.getLong(&quot;msg_id&quot;));</span>
+<span class="fc" id="L134">                message.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L135">                message.setTimeSent(rs.getLong(&quot;time_sent&quot;));</span>
+<span class="fc" id="L136">                message.setMessage(rs.getString(&quot;message&quot;));</span>
+<span class="fc" id="L137">                message.setUserId(rs.getLong(&quot;user_id&quot;));</span>
+<span class="fc" id="L138">                messageList.add(message);</span>
+                
+            }
+<span class="nc" id="L141">        } catch(SQLException e) {</span>
+<span class="nc" id="L142">            e.printStackTrace();</span>
+<span class="nc" id="L143">            throw new RuntimeException(e);</span>
+<span class="fc" id="L144">        }</span>
+<span class="fc" id="L145">        return messageList;</span>
+    }
+    public ArrayList&lt;Message&gt; getMessagesInGroupChat(long id, int limit, int offset){
+        // Group Chat ID
+
+
+<span class="fc" id="L151">        Message message = new Message();</span>
+<span class="fc" id="L152">        ArrayList&lt;Message&gt; messageList = new ArrayList&lt;Message&gt;();</span>
+<span class="fc" id="L153">        try (PreparedStatement statement = this.connection.prepareStatement(GET_LATEST_MESSAGES_IN_GROUPCHAT_OFFSET);) {</span>
+<span class="fc" id="L154">            statement.setLong(1, id);</span>
+<span class="fc" id="L155">            statement.setInt(2, limit);</span>
+<span class="fc" id="L156">            statement.setLong(3, offset);</span>
+<span class="fc" id="L157">            ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            while(rs.next()) {</span>
+<span class="fc" id="L159">                message = new Message();</span>
+<span class="fc" id="L160">                message.setMessageId(rs.getLong(&quot;msg_id&quot;));</span>
+<span class="fc" id="L161">                message.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L162">                message.setTimeSent(rs.getLong(&quot;time_sent&quot;));</span>
+<span class="fc" id="L163">                message.setMessage(rs.getString(&quot;message&quot;));</span>
+<span class="fc" id="L164">                message.setUserId(rs.getLong(&quot;user_id&quot;));</span>
+<span class="fc" id="L165">                messageList.add(message);</span>
+                
+            }
+<span class="nc" id="L168">        } catch(SQLException e) {</span>
+<span class="nc" id="L169">            e.printStackTrace();</span>
+<span class="nc" id="L170">            throw new RuntimeException(e);</span>
+<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">        return messageList;</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

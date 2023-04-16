@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crewconnect</a> &gt; <a href="index.source.html" class="el_package">com.coopercrew.crewconnect</a> &gt; <span class="el_source">MessageDAO.java</span></div><h1>MessageDAO.java</h1><pre class="source lang-java linenums">package com.coopercrew.crewconnect;
+import com.coopercrew.crewconnect.util.DataAccessObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+public class MessageDAO extends DataAccessObject{
+    private static final String GET_BY_MESSAGE_ID = &quot;SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE msg_id = ? &quot;;
+    private static final String GET_BY_MESSAGE_CONTENT = &quot;SELECT msg_id, gc_id, user_id, time_sent, message FROM messages WHERE message = ? &quot;;
+    private static final String DELETE_MESSAGE_BY_ID = &quot;DELETE FROM messages WHERE msg_id = ?&quot;;
+    private static final String DELETE_MESSAGE_BY_CONTENT = &quot;DELETE FROM messages WHERE message = ?&quot;;
+    private static final String SEND_MESSAGE = &quot;INSERT INTO messages (gc_id, user_id, time_sent, message) VALUES (?, ?, ?, ?);&quot;;   
+    public MessageDAO(Connection connection) {
+<span class="fc" id="L14">        super(connection);</span>
+<span class="fc" id="L15">    }</span>
+    public void setMessageAttributes(PreparedStatement statement, Message message) throws SQLException {
+<span class="fc" id="L17">        ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        while(rs.next()) {</span>
+<span class="fc" id="L19">            message.setMessageId(rs.getLong(&quot;msg_id&quot;));</span>
+<span class="fc" id="L20">            message.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L21">            message.setTimeSent(rs.getLong(&quot;time_sent&quot;));</span>
+<span class="fc" id="L22">            message.setMessage(rs.getString(&quot;message&quot;));</span>
+<span class="fc" id="L23">            message.setUserId(rs.getLong(&quot;user_id&quot;));       </span>
+         }
+<span class="fc" id="L25">    }</span>
+    public Message findById(long id){
+<span class="fc" id="L27">        Message message = new Message();</span>
+<span class="fc" id="L28">        try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_MESSAGE_ID);) {</span>
+<span class="fc" id="L29">            statement.setLong(1, id);</span>
+<span class="fc" id="L30">            setMessageAttributes(statement, message);</span>
+<span class="nc" id="L31">        } catch(SQLException e) {</span>
+<span class="nc" id="L32">            e.printStackTrace();</span>
+<span class="nc" id="L33">            throw new RuntimeException(e);</span>
+<span class="fc" id="L34">        }</span>
+<span class="fc" id="L35">        return message;</span>
+    }
+    public Message findByMessage(String content){
+<span class="fc" id="L38">        Message message = new Message();</span>
+<span class="fc" id="L39">        try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_MESSAGE_CONTENT);) {</span>
+<span class="fc" id="L40">            statement.setString(1, content);</span>
+<span class="fc" id="L41">            setMessageAttributes(statement, message);</span>
+<span class="nc" id="L42">        } catch(SQLException e) {</span>
+<span class="nc" id="L43">            e.printStackTrace();</span>
+<span class="nc" id="L44">            throw new RuntimeException(e);</span>
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">        return message;</span>
+    }
+    public void deleteByMessageId(long id) {
+<span class="fc" id="L49">        try(PreparedStatement statement = this.connection.prepareStatement(DELETE_MESSAGE_BY_ID);) {</span>
+<span class="fc" id="L50">            statement.setLong(1, id);</span>
+<span class="fc" id="L51">            statement.executeUpdate();</span>
+<span class="nc" id="L52">        } catch (SQLException e) {</span>
+<span class="nc" id="L53">            e.printStackTrace();</span>
+<span class="nc" id="L54">            throw new RuntimeException(e);</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">    }</span>
+    public void deleteByMessageContent(String content) {
+<span class="nc" id="L58">        try(PreparedStatement statement = this.connection.prepareStatement(DELETE_MESSAGE_BY_CONTENT);) {</span>
+<span class="nc" id="L59">            statement.setString(1, content);</span>
+<span class="nc" id="L60">            statement.executeUpdate();</span>
+<span class="nc" id="L61">        } catch (SQLException e) {</span>
+<span class="nc" id="L62">            e.printStackTrace();</span>
+<span class="nc" id="L63">            throw new RuntimeException(e);</span>
+<span class="nc" id="L64">        }</span>
+<span class="nc" id="L65">    }</span>
+    public void sendMessage(long gc_id, long user_id, Long time_sent, String message) {
+<span class="fc" id="L67">        try(PreparedStatement statement = this.connection.prepareStatement(SEND_MESSAGE);) {</span>
+<span class="fc" id="L68">            statement.setLong(1, gc_id);</span>
+<span class="fc" id="L69">            statement.setLong(2, user_id);</span>
+<span class="fc" id="L70">            statement.setLong(3, time_sent);</span>
+<span class="fc" id="L71">            statement.setString(4, message);</span>
+<span class="fc" id="L72">            statement.executeUpdate();</span>
+<span class="nc" id="L73">        } catch (SQLException e) {</span>
+<span class="nc" id="L74">            e.printStackTrace();</span>
+<span class="nc" id="L75">            throw new RuntimeException(e);</span>
+<span class="fc" id="L76">        }</span>
+<span class="fc" id="L77">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

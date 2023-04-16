@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crewconnect</a> &gt; <a href="index.source.html" class="el_package">com.coopercrew.crewconnect</a> &gt; <span class="el_source">ServerDAO.java</span></div><h1>ServerDAO.java</h1><pre class="source lang-java linenums">package com.coopercrew.crewconnect;
+
+import com.coopercrew.crewconnect.util.DataAccessObject;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServerDAO extends DataAccessObject {
+    public static final String GET_BY_SERVER_ID = &quot;SELECT server_id, server_name FROM servers WHERE server_id = ?&quot;;
+    public static final String GET_BY_SERVERNAME = &quot;SELECT server_id, server_name FROM servers WHERE server_name = ?&quot;;
+    public static final String INSERT_SERVER = &quot;INSERT INTO servers (server_name) VALUES (?)&quot;;
+    public static final String INSERT_SERVER_GROUPCHAT = &quot;INSERT INTO server_groupchats (server_id, gc_id) VALUES (?, ?)&quot;;
+    public static final String DELETE_SERVER = &quot;DELETE FROM servers WHERE server_id = ?&quot;;
+    public static final String GET_GROUPCHATS_BY_SERVER_ID = &quot;SELECT gc.gc_id, gc.group_name, gc.group_size, gc.date_created FROM groupchats gc JOIN server_groupchats sg ON gc.gc_id = sg.gc_id WHERE sg.server_id = ?&quot;;
+    // first we need to join users onto user_gc by user_id to get all groupchats that the user is a part of
+    // then we need to join this new table onto server_groupchats by gc_id to get all the servers the groupchats are a part of
+    // then do one final join on server_id to retrieve name and id of each server the user is a part of.
+    public static final String FIND_SERVERS_BY_USER_ID = &quot;SELECT DISTINCT s.server_id, s.server_name &quot; +
+    &quot;FROM users u &quot; +
+    &quot;JOIN users_gc ugc ON u.user_id = ugc.user_id &quot; +
+    &quot;JOIN server_groupchats sg ON ugc.gc_id = sg.gc_id &quot; +
+    &quot;JOIN servers s ON sg.server_id = s.server_id &quot; +
+    &quot;WHERE u.user_id = ?&quot;;
+
+    public ServerDAO(Connection connection) {
+<span class="fc" id="L30">        super(connection);</span>
+<span class="fc" id="L31">    }</span>
+
+    public void setServerAttributes(PreparedStatement statement, Server server) throws SQLException {
+<span class="fc" id="L34">        ResultSet rs = statement.executeQuery();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        while (rs.next()) {</span>
+<span class="fc" id="L36">            server.setServerId(rs.getLong(&quot;server_id&quot;));</span>
+<span class="fc" id="L37">            server.setServerName(rs.getString(&quot;server_name&quot;));</span>
+        } 
+<span class="fc" id="L39">    }</span>
+
+    public Server findByServerId(long id) {
+<span class="fc" id="L42">        Server server = new Server();</span>
+<span class="fc" id="L43">        try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_SERVER_ID);) {</span>
+<span class="fc" id="L44">            statement.setLong(1, id);</span>
+<span class="fc" id="L45">            setServerAttributes(statement, server);</span>
+<span class="nc" id="L46">        } catch (SQLException e) {</span>
+<span class="nc" id="L47">            e.printStackTrace();</span>
+<span class="nc" id="L48">            throw new RuntimeException(e);</span>
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">        return server;</span>
+    }
+
+    public Server findByServerName(String name) {
+<span class="fc" id="L54">        Server server = new Server();</span>
+<span class="fc" id="L55">        try (PreparedStatement statement = this.connection.prepareStatement(GET_BY_SERVERNAME);) {</span>
+<span class="fc" id="L56">            statement.setString(1, name);</span>
+<span class="fc" id="L57">            setServerAttributes(statement, server);</span>
+<span class="nc" id="L58">        } catch (SQLException e) {</span>
+<span class="nc" id="L59">            e.printStackTrace();</span>
+<span class="nc" id="L60">            throw new RuntimeException(e);</span>
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">        System.out.println(server);</span>
+<span class="fc" id="L63">        return server;</span>
+    }
+
+    public void createServer(String serverName) {
+<span class="fc" id="L67">        try (PreparedStatement statement = this.connection.prepareStatement(INSERT_SERVER);) {</span>
+<span class="fc" id="L68">            statement.setString(1, serverName);</span>
+<span class="fc" id="L69">            statement.executeUpdate();</span>
+<span class="nc" id="L70">        } catch (SQLException e) {</span>
+<span class="nc" id="L71">            e.printStackTrace();</span>
+<span class="nc" id="L72">            throw new RuntimeException(e);</span>
+<span class="fc" id="L73">        }</span>
+<span class="fc" id="L74">    }</span>
+
+    public void addGroupChatToServer(long serverId, long gcId) {
+<span class="fc" id="L77">        try (PreparedStatement statement = this.connection.prepareStatement(INSERT_SERVER_GROUPCHAT);) {</span>
+<span class="fc" id="L78">            statement.setLong(1, serverId);</span>
+<span class="fc" id="L79">            statement.setLong(2, gcId);</span>
+<span class="fc" id="L80">            statement.executeUpdate();</span>
+<span class="nc" id="L81">        } catch (SQLException e) {</span>
+<span class="nc" id="L82">            e.printStackTrace();</span>
+<span class="nc" id="L83">            throw new RuntimeException(e);</span>
+<span class="fc" id="L84">        }</span>
+<span class="fc" id="L85">    }</span>
+
+    public void deleteServer(long serverId) {
+<span class="fc" id="L88">        try (PreparedStatement statement = this.connection.prepareStatement(DELETE_SERVER);) {</span>
+<span class="fc" id="L89">            statement.setLong(1, serverId);</span>
+<span class="fc" id="L90">            statement.executeUpdate();</span>
+<span class="nc" id="L91">        } catch (SQLException e) {</span>
+<span class="nc" id="L92">            e.printStackTrace();</span>
+<span class="nc" id="L93">            throw new RuntimeException(e);</span>
+<span class="fc" id="L94">        }</span>
+<span class="fc" id="L95">    }</span>
+
+    public List&lt;Groupchat&gt; getGroupChatsByServerId(long serverId) {
+<span class="fc" id="L98">        List&lt;Groupchat&gt; groupchats = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L100">        try (PreparedStatement statement = this.connection.prepareStatement(GET_GROUPCHATS_BY_SERVER_ID);) {</span>
+<span class="fc" id="L101">            statement.setLong(1, serverId);</span>
+<span class="fc" id="L102">            ResultSet rs = statement.executeQuery();</span>
+
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L105">                Groupchat groupchat = new Groupchat();</span>
+<span class="fc" id="L106">                groupchat.setGroupChatId(rs.getLong(&quot;gc_id&quot;));</span>
+<span class="fc" id="L107">                groupchat.setGroupName(rs.getString(&quot;group_name&quot;));</span>
+<span class="fc" id="L108">                groupchat.setGroupSize(rs.getInt(&quot;group_size&quot;));</span>
+<span class="fc" id="L109">                groupchat.setDateCreated(rs.getString(&quot;date_created&quot;));</span>
+<span class="fc" id="L110">                groupchats.add(groupchat);</span>
+<span class="fc" id="L111">            }</span>
+<span class="nc" id="L112">        } catch (SQLException e) {</span>
+<span class="nc" id="L113">            e.printStackTrace();</span>
+<span class="nc" id="L114">            throw new RuntimeException(e);</span>
+<span class="fc" id="L115">        }</span>
+
+<span class="fc" id="L117">        return groupchats;</span>
+    }
+
+    public List&lt;Server&gt; findServersByUserId(long userId) {
+<span class="nc" id="L121">        List&lt;Server&gt; servers = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L122">        try (PreparedStatement statement = this.connection.prepareStatement(FIND_SERVERS_BY_USER_ID);) {</span>
+<span class="nc" id="L123">            statement.setLong(1, userId);</span>
+<span class="nc" id="L124">            ResultSet rs = statement.executeQuery();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L126">                Server server = new Server();</span>
+<span class="nc" id="L127">                server.setServerId(rs.getLong(&quot;server_id&quot;));</span>
+<span class="nc" id="L128">                server.setServerName(rs.getString(&quot;server_name&quot;));</span>
+<span class="nc" id="L129">                servers.add(server);</span>
+<span class="nc" id="L130">            }</span>
+<span class="nc" id="L131">        } catch (SQLException e) {</span>
+<span class="nc" id="L132">            e.printStackTrace();</span>
+<span class="nc" id="L133">            throw new RuntimeException(e);</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc" id="L135">        return servers;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>
