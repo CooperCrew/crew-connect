@@ -20,8 +20,28 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [chatName, setChatName] = useState("My Chat ");
     const [isOpen, setIsOpen] = useState(false);
+    const [userName, setUserName] = useState("");
+    const [newError, setNewError] = useState("");
     
     const theme = createTheme();
+
+    // CSS Specifications
+
+    const buttonSX = {
+        "&:hover": {
+            backgroundColor: 'lightblue'
+        },
+        bgcolor: '#070e73',
+        color: 'white',
+        m: 1
+    }
+
+    const textSX = {
+        color: 'purple',
+        m: 2
+    }
+
+    const av_src = "https://t3.ftcdn.net/jpg/00/64/67/52/360_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg";
 
     //connect to socket
     // new useeffect hook for signing in with firebase auth
@@ -33,6 +53,7 @@ const App = () => {
           .then(async (userCredential) => {
             const user = userCredential.user;
             const userEmail = user.email;
+            setUserName(user.displayName);
             // Fetch user data by email from your database
             const response = await fetch(
               `/user/email/${encodeURIComponent(userEmail)}`
@@ -166,7 +187,7 @@ const App = () => {
             for (const user of users) {
                 const userId = await fetchUserIdByUsername(user);
                 if (userId === null) {
-                    alert(`Invalid username or incorrect format: ${user}. Users should be comma delimited, like "User1, User2".`);
+                    setNewError(`Invalid username or incorrect format: ${user}. Users should be comma delimited, like "User1, User2".`);
                     continue;
                 }
                 await fetch(`/groupchat/gcId/` + groupChatId + "/userId/" + userId, {
@@ -178,6 +199,7 @@ const App = () => {
             }
             const newChat = { id: groupChatId, users, name, messages: [] };
             setChats([...chats, newChat]);
+            setNewError("");
         } catch (error) {
             console.error("Error creating new chat:", error);
         }
@@ -211,17 +233,24 @@ const App = () => {
                             handleLogout(); 
                             }} 
                             className="bottom" 
-                            >Log Out</Button>
-                        <Button onClick={togglePopup}>New Chat</Button>
-                        {isOpen && (<>
+                            sx={buttonSX}>
+                            Log Out
+                        </Button>
+                        <Button 
+                            onClick={togglePopup}
+                            sx={buttonSX}>
+                            New Chat
+                        </Button>
+                        {isOpen && (<CssBaseline sx={{m: 2}}>
                                 <h3>Create New Chat</h3>
-                                <Grid>
+                                <Box component="form">
                                     <TextField
                                         type="text"
                                         id="name"
                                         placeholder="Chat Name"
                                         size="15"
                                         onChange={(event) => {setChatName(event.target.value);}}
+                                        error={newError!==""}
                                     />
                                     <TextField
                                         type="text" 
@@ -231,21 +260,24 @@ const App = () => {
                                         required
                                         value={users} 
                                         onChange={(event) => setUsers(event.target.value.split(","))} 
+                                        error={newError!==""}
+                                        helperText={newError}
                                     />
-                                    <Button onClick={handlePopupCreate}>Create</Button> <Button onClick={togglePopup}>CANCEL</Button>
-                                </Grid></>
+                                    <Divider/>
+                                    <Button onClick={handlePopupCreate} sx={buttonSX}>Create</Button> <Button onClick={togglePopup} sx={buttonSX}>CANCEL</Button>
+                                </Box></CssBaseline>
                         )}
-                        <List>
+                        <List sx={textSX}>
                             <ListItem button key={id}>
                                 <ListItemIcon>
-                                    <Avatar src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.personality-insights.com%2Fdefault-profile-pic%2F&psig=AOvVaw1CZ4o8DO5MP2OWNPx80G7p&ust=1681537567328000&source=images&cd=vfe&ved=0CA0QjRxqFwoTCOCSy-DVqP4CFQAAAAAdAAAAABAR" />
+                                    <Avatar src={av_src} />
                                 </ListItemIcon>
-                                <ListItemText primary={id}></ListItemText>
+                                <ListItemText primary={userName}></ListItemText>
                             </ListItem>
                         </List>
                     </Grid>
                 </Grid>
-                <Grid container>
+                <Grid container sx={textSX}>
                     <GroupChatList id ={id} loggedIn = {loggedIn} chats = {chats} setChats = {setChats}/>
                 </Grid>
             </ThemeProvider>
