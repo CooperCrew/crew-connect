@@ -29,7 +29,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
     const OnMessageObtained = (payload) => {
         let newMessage = JSON.parse(payload.body);
         console.log(newMessage);
-        if(newMessage.timeSent != 0) {
+        if(newMessage.timeSent != 0 && newMessage.userId !== id) {
             setChats((prevChats) => {
                 return prevChats.map((chat) => {
                     if (chat.id === newMessage.groupChatId ) {
@@ -73,9 +73,37 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
         console.log("Failed to join websocket");
     }
     
+    const fetchGroupChatMessages = async (chatId) => {
+        try {
+            const response = await fetch(`/message/groupID/${chatId}`);
+            const data = await response.json();
+            console.log(data);
+            setChats((prevChats) => {
+                return prevChats.map((chat) => {
+                    if (chat.id === chatId) {
+                        return {
+                            ...chat,
+                            messages: Array.isArray(data)
+                                ? data.map((message) => ({
+                                      id: message.messageId,
+                                      sender: message.userId,
+                                      text: message.message,
+                                  }))
+                                : [],
+                        };
+                    }
+                    return chat;
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching group chat messages:", error);
+        }
+    };
+
     // Handler for clicking on a chat to view it
     const handleSelectChat = (chatId, id) => {
         setSelectedChatId(chatId);
+        fetchGroupChatMessages(chatId);
         currentChatId = chatId;
         connect();
     };
