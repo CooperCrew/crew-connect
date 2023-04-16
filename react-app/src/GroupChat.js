@@ -27,31 +27,31 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
           });
     
           if (response.ok) {
-            const data = await response.json();
-            const updatedChats = chats.map((chat) => {
-                if (chat.id === selectedChatId) {
-                return {
-                    ...chat,
-                    messages: [
-                    ...chat.messages,
-                    {
-                        id: data.messageId,
-                        sender: id,
-                        text: message,
-                    },
-                    ],
-                };
-                }
-                return chat;
-            });
-            setChats(updatedChats);
-             setMessage("");
+                const data = await response.json();
+                // const updatedChats = chats.map((chat) => {
+                //     if (chat.id === selectedChatId) {
+                //     return {
+                //         ...chat,
+                //         messages: [
+                //         ...chat.messages,
+                //         {
+                //             id: data.messageId,
+                //             sender: id,
+                //             text: message,
+                //         },
+                //         ],
+                //     };
+                //     }
+                //     return chat;
+                // });
+                // setChats(updatedChats);
+                setMessage("");
     
             // Send the message through the WebSocket
             stompClient.send(
                 `/app/message/${selectedChatId}`,
                 {},
-                JSON.stringify(messageToSend)
+                JSON.stringify(data)
             );
           } else {
             throw new Error("Error sending message");
@@ -85,19 +85,34 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
             await fetch(`/message/${messageId}`, {
                 method: 'DELETE',
             });
-            const updatedChats = chats.map(chat => {
-                if (chat.id === selectedChatId) {
-                    return {
-                        ...chat,
-                        messages: chat.messages.filter(message => message.id !== messageId),
-                    };
-                }
-                return chat;
-            });
-            setChats(updatedChats);
+         //   const updatedChats = chats.map(chat => {
+           //     if (chat.id === selectedChatId) {
+           //         return {
+            //            ...chat,
+              //          messages: chat.messages.filter(message => message.id !== messageId),
+               //     };
+              //  }
+              //  return chat;
+           // });
+          
+           // setChats(updatedChats);
+            let DeleteMessage = {
+                groupChatId: selectedChatId,
+                userId: id,
+                message: "DELETE MESSAGE ID: " + messageId,
+                timeSent: 0, //indicates message is deleted
+                messageId: messageId,
+              };
+              stompClient.send(
+                `/app/message/${selectedChatId}`,
+                {},
+                JSON.stringify(DeleteMessage)
+            );
+            
         } catch (error) {
             console.error("Error deleting message:", error);
         }
+
     }
 
     const handleLeave = async () => {

@@ -6,7 +6,7 @@ import { Stomp } from '@stomp/stompjs';
 
 var stompClient = null;
 let currentChatId = null;
-
+var subscription = null;
 const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
     // Variable Declarations
     const [selectedChatId, setSelectedChatId] = useState(null);
@@ -17,41 +17,60 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
             let Sock = new SockJS('http://localhost:8080/ws');
             stompClient = Stomp.over(Sock);
             setConnectedToSocket(true);
+            stompClient.connect({}, onConnect, onError);
+        } else {
+            if(subscription) {
+                subscription.unsubscribe();
+                subscription = stompClient.subscribe(`/chatroom/${currentChatId}`, OnMessageObtained);
+            }
         }
-        stompClient.connect({}, onConnect, onError);
     }
 
     const OnMessageObtained = (payload) => {
         let newMessage = JSON.parse(payload.body);
         console.log(newMessage);
-
-        const updatedChats = chats.map((chat) => {
-            if (chat.id === newMessage.groupChatId) {
-                return {
-                ...chat,
-                messages: [
-                    ...chat.messages,
-                    {
-                    id: newMessage.messageId,
-                    sender: newMessage.userId,
-                    text: newMessage.message,
-                    },
-                ],
-                };
-            }
-            return chat;
+        if(newMessage.timeSent != 0) {
+            setChats((prevChats) => {
+                return prevChats.map((chat) => {
+                    if (chat.id === newMessage.groupChatId ) {
+                        return {
+                            ...chat,
+                            messages: [
+                                ...chat.messages,
+                                {
+                                    id: newMessage.messageId,
+                                    sender: newMessage.userId,
+                                    text: newMessage.message,
+                                },
+                            ],
+                        };
+                    } 
+                    return chat;
+                });
             });
-            setChats(updatedChats);
+        }
+        if(newMessage.timeSent == 0) {
+            setChats((prevChats) => {
+            return prevChats.map((chat) => {
+                    if (chat.id === newMessage.groupChatId ) {
+                            return {
+                                ...chat,
+                                messages: chat.messages.filter(message => message.id !== newMessage.messageId),
+                            };
+                            }
+                return chat;
+            });
+        });                                  
+        }
     }
 
     const onConnect= () => {
-        console.log("it connected;");   
-        stompClient.subscribe(`/chatroom/${currentChatId}`, OnMessageObtained);
-        
+        //console.log("it connected;");   
+        subscription = stompClient.subscribe(`/chatroom/${currentChatId}`, OnMessageObtained);
     }
     
     const onError = () => {
-        console.log("It failed");
+        console.log("Failed to join websocket");
     }
     
     // Handler for clicking on a chat to view it
