@@ -1,6 +1,8 @@
 package com.coopercrew.crewconnect.controller;
 
 import org.springframework.stereotype.Controller;
+
+import com.coopercrew.crewconnect.Groupchat;
 import com.coopercrew.crewconnect.Message;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -23,7 +25,8 @@ public class ChatController {
      
         return Message;
     }
-
+    @MessageMapping("/user/{id}/groupchatadd")
+    public Groupchat sendGroupchat(@DestinationVariable String )
 
 
 }
