@@ -1,9 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import { Grid, TextField, List, Divider, Link} from '@mui/material';
+import { Grid, TextField, List, Divider, Link, Button} from '@mui/material';
 import Message from './Message';
 
 const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect}) => { 
     const [message, setMessage] = useState('');
+
+    const buttonSX = {
+        "&:hover": {
+            backgroundColor: 'lightblue'
+        },
+        bgcolor: '#070e73',
+        color: 'white',
+        m: 1
+    }
 
     const handleSendMessage = async (message) => {
         try {
@@ -130,12 +139,10 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
     return (
         <Grid item xs={9}>
             <h3>{chat.name}</h3>
+            <Button sx={buttonSX} onClick={handleLeave}>
+                Leave
+            </Button>
                 <List>
-                    <Grid container>
-                        <Link href="#" variant="body2" onClick={handleLeave}>
-                        {"Leave"}
-                        </Link>
-                    </Grid>
                     <Grid container>
                         {chat.messages.map((message, index) => (
                         <Message key={index} message={message} handleDeleteMessage={handleDeleteMessage} />
