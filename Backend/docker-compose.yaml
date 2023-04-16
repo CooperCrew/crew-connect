@@ -2,7 +2,7 @@ services:
   db:
     image: postgres
     volumes:
-      - /home/john/srv2/postgres:/var/lib/postgresql/data
+      - /home/colin/srv/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=password
@@ -14,7 +14,11 @@ services:
     ports: 
       - 8080:8080
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - db
