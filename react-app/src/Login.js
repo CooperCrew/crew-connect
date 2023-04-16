@@ -52,7 +52,7 @@ const Login = ({onLogin}) => {
             email: email,
             status: "Offline",
           };
-          fetch(`http://142.93.251.255:8080/user/register`, {
+          fetch(`/user/register`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
