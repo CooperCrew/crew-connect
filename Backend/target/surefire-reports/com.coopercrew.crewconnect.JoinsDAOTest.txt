@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.coopercrew.crewconnect.JoinsDAOTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.823 s - in com.coopercrew.crewconnect.JoinsDAOTest
