@@ -22,6 +22,8 @@ const Login = ({onLogin}) => {
     const [email, setEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+    const [loginErrorMessage, setLoginErrorMessage] = React.useState("");
+    const [createErrorMessage, setCreateErrorMessage] = React.useState("");
 
     // Login handler
     const handleLogin = async (e) => {
@@ -31,6 +33,7 @@ const Login = ({onLogin}) => {
           onLogin(username, password);
         } catch (error) {
           console.error("Error signing in:", error);
+          setLoginErrorMessage("Invalid email and/or password!");
         }
     };
       
@@ -38,7 +41,7 @@ const Login = ({onLogin}) => {
     const handleCreateAccount = async (event) => {
         event.preventDefault();
         if (password !== confirmPassword) {
-          alert('Passwords do not match');
+          setCreateErrorMessage('Passwords do not match!');
           return;
         }
         try {
@@ -66,6 +69,7 @@ const Login = ({onLogin}) => {
           setIsCreatingAccount(false);
         } catch (error) {
           console.error("Error creating account:", error);
+          setCreateErrorMessage("Error creating account.");
         }
       };
 
@@ -121,6 +125,7 @@ const Login = ({onLogin}) => {
               name="email"
               autoComplete="email"
               value={username}
+              error={loginErrorMessage!==""}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
             />
@@ -134,6 +139,8 @@ const Login = ({onLogin}) => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              error={loginErrorMessage!==""}
+              helperText={loginErrorMessage}
               autoComplete="current-password"
             />
             <Button
@@ -200,6 +207,7 @@ const Login = ({onLogin}) => {
               onChange={(event) => setUsername(event.target.value)}
               name="email"
               autoComplete="email"
+              error={createErrorMessage!=="" && createErrorMessage!=="Passwords do not match!"}
               autoFocus
             />
             <TextField
@@ -212,6 +220,7 @@ const Login = ({onLogin}) => {
               label="Email Address"
               name="email"
               autoComplete="email"
+              error={createErrorMessage!=="" && createErrorMessage!=="Passwords do not match!"}
               autoFocus
             />
             <TextField
@@ -225,6 +234,7 @@ const Login = ({onLogin}) => {
               type="password"
               id="password"
               autoComplete="current-password"
+              error={createErrorMessage!==""}
             />
             <TextField
               margin="normal"
@@ -233,10 +243,12 @@ const Login = ({onLogin}) => {
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               name="password"
-              label="Password"
+              label="Confirm Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              error={createErrorMessage!==""}
+              helperText={createErrorMessage}
             />
             <Button
               type="submit"

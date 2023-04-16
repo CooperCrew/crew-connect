@@ -21,6 +21,7 @@ const App = () => {
     const [chatName, setChatName] = useState("My Chat ");
     const [isOpen, setIsOpen] = useState(false);
     const [userName, setUserName] = useState("");
+    const [newError, setNewError] = useState("");
     
     const theme = createTheme();
 
@@ -186,7 +187,7 @@ const App = () => {
             for (const user of users) {
                 const userId = await fetchUserIdByUsername(user);
                 if (userId === null) {
-                    alert(`Invalid username or incorrect format: ${user}. Users should be comma delimited, like "User1, User2".`);
+                    setNewError(`Invalid username or incorrect format: ${user}. Users should be comma delimited, like "User1, User2".`);
                     continue;
                 }
                 await fetch(`/groupchat/gcId/` + groupChatId + "/userId/" + userId, {
@@ -198,6 +199,7 @@ const App = () => {
             }
             const newChat = { id: groupChatId, users, name, messages: [] };
             setChats([...chats, newChat]);
+            setNewError("");
         } catch (error) {
             console.error("Error creating new chat:", error);
         }
@@ -239,7 +241,7 @@ const App = () => {
                             sx={buttonSX}>
                             New Chat
                         </Button>
-                        {isOpen && (<>
+                        {isOpen && (<CssBaseline sx={{m: 2}}>
                                 <h3>Create New Chat</h3>
                                 <Box component="form">
                                     <TextField
@@ -248,6 +250,7 @@ const App = () => {
                                         placeholder="Chat Name"
                                         size="15"
                                         onChange={(event) => {setChatName(event.target.value);}}
+                                        error={newError!==""}
                                     />
                                     <TextField
                                         type="text" 
@@ -257,10 +260,12 @@ const App = () => {
                                         required
                                         value={users} 
                                         onChange={(event) => setUsers(event.target.value.split(","))} 
+                                        error={newError!==""}
+                                        helperText={newError}
                                     />
                                     <Divider/>
                                     <Button onClick={handlePopupCreate} sx={buttonSX}>Create</Button> <Button onClick={togglePopup} sx={buttonSX}>CANCEL</Button>
-                                </Box></>
+                                </Box></CssBaseline>
                         )}
                         <List sx={textSX}>
                             <ListItem button key={id}>
