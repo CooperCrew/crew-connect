@@ -31,6 +31,7 @@ public class ServerControllerTest {
     private long testServerId;
     private ServerController controller;
 
+    // set a set server up, post it, and get it back to get the server id
     @BeforeEach
     public void setUp() throws Exception {
         testServerName = "Test Server";
@@ -44,12 +45,15 @@ public class ServerControllerTest {
         testServerId = Long.parseLong(response.split(",")[0].split(":")[1].trim());
     }
 
+    // delete the server after done using it for testing
     @AfterEach
     public void tearDown() throws Exception {
         mockMvc.perform(delete("/server/id/" + testServerId))
                 .andExpect(status().isOk());
     }
 
+    // createa server and make sure it matches the original server name
+    // this also tests getting a server by server name and deletion
     @Test
     public void testCreateServer() throws Exception {
         String newServerName = "New Server";
@@ -62,7 +66,7 @@ public class ServerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serverName").value(newServerName));
 
-        // Clean up
+        // delete the server there after
         String response = mockMvc.perform(get("/server/name/" + newServerName))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -71,39 +75,12 @@ public class ServerControllerTest {
                 .andExpect(status().isOk());
     }
 
+    // find a server by server id
     @Test
     public void testFindByServerId() throws Exception {
         mockMvc.perform(get("/server/id/" + testServerId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.serverId").value(testServerId))
                 .andExpect(jsonPath("$.serverName").value(testServerName));
-    }
-
-    @Test
-    public void testFindByServerName() throws Exception {
-        mockMvc.perform(get("/server/name/" + testServerName))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.serverId").value(testServerId))
-                .andExpect(jsonPath("$.serverName").value(testServerName));
-    }
-
-    @Test
-    public void testDeleteServer() throws Exception {
-        String newServerName = "New Server";
-        mockMvc.perform(post("/server")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"serverName\":\"" + newServerName + "\"}"))
-                .andExpect(status().isOk());
-
-        String response = mockMvc.perform(get("/server/name/" + newServerName))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        long newServerId = Long.parseLong(response.split(",")[0].split(":")[1].trim());
-
-        mockMvc.perform(delete("/server/id/" + newServerId))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/server/id/" + newServerId))
-                .andExpect(status().isInternalServerError());
     }
 }

@@ -36,12 +36,13 @@ public class UserControllerTest {
     private String testStatus;
     private long testUserId;
 
+    // create a sample user object, post it, and get it back to get the userid
     @BeforeEach
     public void setUp() throws Exception {
         testUsername = "testUser";
         testPassword = "testPass";
         testEmail = "testEmail123@example.com";
-        testStatus = "active";
+        testStatus = "Online";
 
         mockMvc.perform(post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -54,12 +55,14 @@ public class UserControllerTest {
         testUserId = Long.parseLong(response.split(",")[4].split(":")[1].trim());
     }
 
+    // delete the user thereafter for db consistency
     @AfterEach
     public void tearDown() throws Exception {
         mockMvc.perform(delete("/user/" + testUserId + "/delete"))
                 .andExpect(status().isOk());
     }
 
+    //get user by the user id we stored
     @Test
     public void testGetUserID() throws Exception {
         mockMvc.perform(get("/user/id/" + testUserId))
@@ -70,6 +73,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(testStatus));
     }
 
+    // get user by the username we stored
     @Test
     public void testFindByUsername() throws Exception {
         mockMvc.perform(get("/user/username/" + testUsername))
@@ -80,6 +84,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(testStatus));
     }
 
+    // get user by the suer email we stored
     @Test
     public void testFindByEmail() throws Exception {
         mockMvc.perform(get("/user/email/" + testEmail))
@@ -90,18 +95,20 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.status").value(testStatus));
     }
 
+    // test changing the status of the user
     @Test
     public void testUpdateStatus() throws Exception {
-        mockMvc.perform(put("/user/" + testUserId + "/updateStatus/newStatus"))
+        mockMvc.perform(put("/user/" + testUserId + "/updateStatus/Offline"))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/user/id/" + testUserId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("newStatus"));
+                .andExpect(jsonPath("$.status").value("Offline"));
     }
 
+    // test registeringa user and deleting the user
     @Test
-    public void testDeleteUser() throws Exception {
+    public void testRegisterAndDeleteUser() throws Exception {
         String newUser = "{\"username\":\"testDelete\", \"email\":\"deleteemail@test.com\", \"password\":\"password\", \"status\":\"status\"}";
         mockMvc.perform(post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -120,6 +127,7 @@ public class UserControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    // test updating the user's email
     @Test
     public void testUpdateEmail() throws Exception {
         String updateEmailJson = "{\"userId\":" + testUserId + ", \"email\":\"newemail@test.com\"}";
@@ -133,7 +141,8 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("newemail@test.com"));
     }
-
+    
+    // test logging the user in
     @Test
     public void testLoginUser() throws Exception {
         String loginJson = "{\"username\":\"" + testUsername + "\", \"password\":\"" + testPassword + "\"}";
@@ -146,6 +155,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.email").value(testEmail));
     }
 
+    // test updating the user's password
     @Test
     public void testUpdatePassword() throws Exception {
         String updatePasswordJson = "{\"userId\":" + testUserId + ", \"password\":\"newPassword\"}";
