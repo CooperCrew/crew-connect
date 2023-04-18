@@ -1,4 +1,5 @@
 -- Populate users table
+\c crewconnect3
 INSERT INTO users (username, password, email, status)
 VALUES
 ('User1', 'password1', 'user1@email.com', 'Online'),
