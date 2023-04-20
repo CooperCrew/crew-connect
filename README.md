@@ -10,11 +10,16 @@ You can now connect to our crew connect application on http://142.93.251.255:300
 
 ## Unit Test Coverage
 
-Here are the result of our unit testing that ensure that our service is reliable and works as expected:
-Proof of tests passing
-UnitTests/UnitTestSuccess.PNG
-Code coverage - 62%
-UnitTests/UnitTestCoverage.PNG
+Here are the results of our unit testing that ensure that our service is reliable and works as expected:
+
+Proof of tests passing:
+
+![Unit Test Success](UnitTests/UnitTestSuccess.PNG)
+
+Code coverage - 62%:
+
+![Unit Test Coverage](UnitTests/UnitTestCoverage.PNG)
+
 
 ## Getting Started
 
