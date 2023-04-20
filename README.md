@@ -4,6 +4,18 @@ Crew Connect is the ultimate communication platform for crews of all kinds. It's
 
 ## How to Run
 Using Docker, the server can be run be running `$ docker compose build` and `$ docker compose up` in the main directory. Be sure to change the directory of the database in the `$ docker-compose.yaml` file to where it is located on your computer (we were having issues using `$HOME` for some raeson). Also, make sure that the hostname is set to `db` if that is the case. The server can also be run using java by running `$ maven package` in the main directory. In this case, make sure that hostname is set to `localhost`. It should produce a `jar` file in target that can be run using the JVM by invoking it using `java -jar {filename}.jar`. Note that the database must be running if ran this way. The database does not automatically create itself as well, sql scripts in the `db-materials/` can be used in order to do so. To use the client (`src/client/client.py`), make sure that the url of the hostname is proper to the situation. If run locally this must be set to localhost. In the example given, it was the url of the server that the spring boot instance was running on during the demo. 
+
+## Crew Connect is Now Hosted
+You can now connect to our crew connect application on http://142.93.251.255:3000/ instead of running it locally!
+
+## Unit Test Coverage
+
+Here are the result of our unit testing that ensure that our service is reliable and works as expected:
+Proof of tests passing
+(UnitTests/UnitTestSuccess.PNG)
+Code coverage - 62%
+(UnitTests/UnitTestCoverage.PNG)
+
 ## Getting Started
 
 To use Crew Connect, you'll first need to muster up the courage to create an account. Once you've done that, you can create or join a crew. When you create a crew, you'll be given a unique invite link that you can share with your crew members. This will get them excited about using the platform, and they'll start hyping you up like you're the coolest person they know.
