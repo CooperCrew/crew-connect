@@ -119,9 +119,6 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
                     <Avatar alt={chat.name}/>
                 </ListItemIcon>
                 <ListItemText primary={chat.name}>{chat.name}</ListItemText>
-                <ListItemText secondary={chat.users.map((user) => (
-                    <span>{user}&emsp;</span>
-                ))} align="right"></ListItemText>
                 </ListItem>
                 ))}
             </List>

@@ -7,6 +7,7 @@ import { auth } from './index';
 
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Paper, Box, Grid, Typography} from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/system';
 
 const theme = createTheme();
 
@@ -78,6 +79,24 @@ const Login = ({onLogin}) => {
         setIsCreatingAccount(!isCreatingAccount);
     };
 
+    const CssTextField = styled(TextField)({
+      backgroundColor: "#383840",
+      "& .MuiInputLabel-root": {
+          color: '#8b8b90'
+      },
+      
+    });
+
+    const buttonSX = {
+      "&:hover": {
+          backgroundColor: 'lightblue'
+      },
+      bgcolor: "#5865F2",
+      color: 'white',
+      mt: 2, 
+      mb: 2
+    }
+
     // HTML for login and account creation screens
     return (
     
@@ -92,14 +111,11 @@ const Login = ({onLogin}) => {
         md={7}
         sx={{
           backgroundImage: 'url(https://media.discordapp.net/attachments/1079537769480724480/1096289155656454254/flat-design-mountain-landscape_23-2149161404.png)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) =>
-            t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{backgroundColor: '#313338',}}>
         <Box
           sx={{
             my: 8,
@@ -112,11 +128,11 @@ const Login = ({onLogin}) => {
           {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar> */}
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{color: '#f2f2f5'}}>
             Sign in
           </Typography>
-          <Box component="form" noValidate onSubmit={handleLogin} sx={{ mt: 1 }}>
-            <TextField
+          <Box component="form" noValidate onSubmit={handleLogin} sx={{ mt: 1, }}>
+            <CssTextField
               margin="normal"
               required
               fullWidth
@@ -128,8 +144,9 @@ const Login = ({onLogin}) => {
               error={loginErrorMessage!==""}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
+              sx={{ input: { color: '#8b8b90' } }}
             />
-            <TextField
+            <CssTextField
               margin="normal"
               required
               fullWidth
@@ -142,12 +159,13 @@ const Login = ({onLogin}) => {
               error={loginErrorMessage!==""}
               helperText={loginErrorMessage}
               autoComplete="current-password"
+              sx={{ input: { color: '#8b8b90' } }}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={buttonSX}
             >
               Sign In
             </Button>
@@ -165,7 +183,7 @@ const Login = ({onLogin}) => {
     )}
     {isCreatingAccount && (
 
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ height: '100vh' }} >
       <CssBaseline />
       <Grid
         item
@@ -181,7 +199,7 @@ const Login = ({onLogin}) => {
           backgroundPosition: 'center',
         }}
       />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{backgroundColor: '#313338',}}>
         <Box
           sx={{
             my: 8,
@@ -194,11 +212,11 @@ const Login = ({onLogin}) => {
           {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <AccountCircleOutlined />
           </Avatar> */}
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{color: '#8b8b90'}}>
             Create Account
           </Typography>
           <Box component="form" noValidate onSubmit={handleCreateAccount} onClick={() => {signOut(getAuth())}} sx={{ mt: 1 }}>
-          <TextField
+          <CssTextField
               margin="normal"
               required
               fullWidth
@@ -209,8 +227,9 @@ const Login = ({onLogin}) => {
               autoComplete="email"
               error={createErrorMessage!=="" && createErrorMessage!=="Passwords do not match!"}
               autoFocus
+              sx={{ input: { color: '#8b8b90' } }}
             />
-            <TextField
+            <CssTextField
               margin="normal"
               required
               fullWidth
@@ -222,8 +241,9 @@ const Login = ({onLogin}) => {
               autoComplete="email"
               error={createErrorMessage!=="" && createErrorMessage!=="Passwords do not match!"}
               autoFocus
+              sx={{ input: { color: '#8b8b90' } }}
             />
-            <TextField
+            <CssTextField
               margin="normal"
               required
               fullWidth
@@ -235,8 +255,9 @@ const Login = ({onLogin}) => {
               id="password"
               autoComplete="current-password"
               error={createErrorMessage!==""}
+              sx={{ input: { color: '#8b8b90' } }}
             />
-            <TextField
+            <CssTextField
               margin="normal"
               required
               fullWidth
@@ -249,12 +270,13 @@ const Login = ({onLogin}) => {
               autoComplete="current-password"
               error={createErrorMessage!==""}
               helperText={createErrorMessage}
+              sx={{ input: { color: '#8b8b90' } }}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={buttonSX}
             >
               Create Account
             </Button>

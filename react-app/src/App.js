@@ -4,7 +4,8 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, si
 import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Grid, AppBar, Toolbar, Typography, Paper, testSX, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText} from '@mui/material';
+import { Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack} from '@mui/material';
+import { styled } from '@mui/system';
 // import SockJS from 'sockjs-client';
 // import { Stomp } from '@stomp/stompjs';
 
@@ -20,6 +21,7 @@ const App = () => {
     const [users, setUsers] = useState([]);
     const [chatName, setChatName] = useState("My Chat ");
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpen2, setIsOpen2] = useState(false);
     const [userName, setUserName] = useState("");
     const [newError, setNewError] = useState("");
     
@@ -31,15 +33,26 @@ const App = () => {
         "&:hover": {
             backgroundColor: 'lightblue'
         },
-        bgcolor: '#070e73',
+        bgcolor: "#5865F2",
         color: 'white',
+        maxHeight: '50px',
         m: 1
     }
+    
+    const CssTextField = styled(TextField)({
+        backgroundColor: "#383840",
+        "& .MuiInputBase-root": {
+            "& input": {
+                color: 'white'
+            }
+        }
+    });
 
     const textSX = {
-        color: 'purple',
-        m: 2
-    }
+        color: '#f2f3f5',
+        m: 2,
+        backgroundColor: "#313338"
+    };
 
     const av_src = "https://t3.ftcdn.net/jpg/00/64/67/52/360_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg";
 
@@ -53,7 +66,6 @@ const App = () => {
           .then(async (userCredential) => {
             const user = userCredential.user;
             const userEmail = user.email;
-            setUserName(user.displayName);
             // Fetch user data by email from your database
             const response = await fetch(
               `/user/email/${encodeURIComponent(userEmail)}`
@@ -61,10 +73,15 @@ const App = () => {
             const data = await response.json();
             setId(data.userId);
             setLoggedIn(true);
+            const response2 = await fetch(`/user/id/${encodeURIComponent(id)}`);
+            const data2 = await response2.json();
+            console.log("Getting Username");
+            console.log(data2.username);
+            setUserName(data2.username);
           })
           .catch((error) => {
             console.error("Error logging in:", error.message);
-          });
+          })
       }, [inputEmail, inputPassword]);   
 
     // use effect hook for getting groupchats and contents
@@ -118,6 +135,7 @@ const App = () => {
             }));
             setChats(newChats);
         };
+
         fetchGroupChats();
     }, [loggedIn, id]);
 
@@ -203,11 +221,16 @@ const App = () => {
         } catch (error) {
             console.error("Error creating new chat:", error);
         }
+        
     };
 
     // Function for toggling the popup
     const togglePopup = () => {
         setIsOpen(!isOpen);
+    }
+
+    const togglePopup2 = () => {
+        setIsOpen2(!isOpen2);
     }
 
     // Handler for when the form to create the chat is submitted
@@ -217,17 +240,35 @@ const App = () => {
         togglePopup();
     };
 
+    // Handler for when the form to change the account info
+    const handlePopup2Create = (event) => {
+        alert("New Info: \n"+"Username: "+ userName +"\nEmail: "+inputEmail+"\nPassword: "+inputPassword);
+        togglePopup2();
+    };
+
     // Return main HTML for home page
     return (
-        <div className="App">
+        <div className="App" class="force-gray">
             <ThemeProvider theme={theme}>
-                <Grid container component={Paper}>
+                <Grid container component={Paper} sx={{backgroundColor: "#313338"}}>
                     <Grid item xs={12} >
-                        <Typography variant="h5" className="header-message" sx={{color: 'purple', m: 2}}>CrewConnect</Typography>
+                        <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>CrewConnect</Typography>
                     </Grid>
                 </Grid>
-                <Grid container component={Paper}>
+                <Grid container component={Paper} sx={{backgroundColor: "#313338"}}>
                     <Grid item xs={3}>
+                        <Stack direction="row">
+                        <Grid item alignContent="left">
+                        <List sx={textSX}>
+                            <ListItem key={id}>
+                                <ListItemIcon>
+                                    <Avatar src={av_src} />
+                                </ListItemIcon>
+                                <ListItemText primary={userName}></ListItemText>
+                            </ListItem>
+                        </List>
+                        </Grid>
+                        <Grid item alignContent="right">
                         <Button onClick={() => { 
                             signOut(getAuth()); 
                             handleLogout(); 
@@ -241,18 +282,26 @@ const App = () => {
                             sx={buttonSX}>
                             New Chat
                         </Button>
-                        {isOpen && (<CssBaseline sx={{m: 2}}>
-                                <h3>Create New Chat</h3>
-                                <Box component="form">
-                                    <TextField
+                        <Button 
+                            onClick={togglePopup2}
+                            sx={buttonSX}>
+                            Manage Account
+                        </Button>
+                        </Grid>
+                        </Stack>
+                        {isOpen && (<CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
+                                <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Create New Chat</Typography>
+                                <Box>
+                                    <Stack direction="row"><CssTextField
                                         type="text"
                                         id="name"
                                         placeholder="Chat Name"
                                         size="15"
                                         onChange={(event) => {setChatName(event.target.value);}}
                                         error={newError!==""}
+                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
                                     />
-                                    <TextField
+                                    <CssTextField
                                         type="text" 
                                         id="users" 
                                         placeholder="Users"
@@ -262,22 +311,59 @@ const App = () => {
                                         onChange={(event) => setUsers(event.target.value.split(","))} 
                                         error={newError!==""}
                                         helperText={newError}
+                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
                                     />
+                                    </Stack>
                                     <Divider/>
                                     <Button onClick={handlePopupCreate} sx={buttonSX}>Create</Button> <Button onClick={togglePopup} sx={buttonSX}>CANCEL</Button>
                                 </Box></CssBaseline>
                         )}
-                        <List sx={textSX}>
-                            <ListItem button key={id}>
-                                <ListItemIcon>
-                                    <Avatar src={av_src} />
-                                </ListItemIcon>
-                                <ListItemText primary={userName}></ListItemText>
-                            </ListItem>
-                        </List>
+                        {isOpen2 && (<CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
+                                <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Change Account Info</Typography>
+                                <Typography variant="p" className="header-message" sx={{color: 'white', m: 2}}>Input new desired account information.</Typography>
+                                <Box>
+                                    <Stack direction="column"><CssTextField
+                                        type="text"
+                                        id="name"
+                                        placeholder="Username"
+                                        size="15"
+                                        onChange={(event) => {setUserName(event.target.value);}}
+                                        error={newError!==""}
+                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                    />
+                                    <CssTextField
+                                        type="text" 
+                                        id="users" 
+                                        placeholder="Email"
+                                        size="85"
+                                        required
+                                        value={users} 
+                                        onChange={(event) => {setInputEmail(event.target.value);}} 
+                                        error={newError!==""}
+                                        helperText={newError}
+                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                    />
+                                    <CssTextField
+                                        type="text" 
+                                        id="users" 
+                                        placeholder="Password"
+                                        size="85"
+                                        required
+                                        value={users} 
+                                        onChange={(event) => {setInputPassword(event.target.value);}} 
+                                        error={newError!==""}
+                                        helperText={newError}
+                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                    />
+                                    </Stack>
+                                    <Divider/>
+                                    <Button onClick={handlePopup2Create} sx={buttonSX}>Save</Button> <Button onClick={togglePopup2} sx={buttonSX}>CANCEL</Button>
+                                </Box></CssBaseline>
+                        )}
+                        
                     </Grid>
                 </Grid>
-                <Grid container sx={textSX}>
+                <Grid sx={textSX}>
                     <GroupChatList id ={id} loggedIn = {loggedIn} chats = {chats} setChats = {setChats}/>
                 </Grid>
             </ThemeProvider>

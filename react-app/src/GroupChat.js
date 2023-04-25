@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Grid, TextField, List, Divider, Link, Button} from '@mui/material';
+import { Grid, TextField, List, Divider, Link, Button, Stack, ListItem, ListItemIcon, ListItemText, Avatar} from '@mui/material';
+import { styled } from '@mui/system';
 import Message from './Message';
 
 const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect}) => { 
@@ -9,10 +10,17 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
         "&:hover": {
             backgroundColor: 'lightblue'
         },
-        bgcolor: '#070e73',
+        bgcolor: '#5865F2',
         color: 'white',
         m: 1
     }
+
+    const CssTextField = styled(TextField)({
+        backgroundColor: "#383840",
+        "& .MuiInputLabel-root": {
+                color: '#8b8b90'
+        }
+    });
 
     const handleSendMessage = async (message) => {
         try {
@@ -138,28 +146,49 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
 
     return (
         <Grid item xs={9}>
-            <h3>{chat.name}</h3>
-            <Button sx={buttonSX} onClick={handleLeave}>
-                Leave
-            </Button>
-                <List>
-                    <Grid container>
+            <Stack direction = "row" spacing={2} divider={<Divider orientation="vertical" flexItem />}>
+            <Grid item xs alignContent="left">
+                <Stack direction = "row" spacing={2}>
+                    <Grid item xs alignContent="left">
+                        <h3>{chat.name}</h3>
+                    </Grid>
+                    <Grid item alignContent="right">
+                        <Button sx={buttonSX} onClick={handleLeave}>
+                            Leave
+                        </Button>
+                    </Grid>
+                    
+                </Stack>
+                <Grid item>
                         {chat.messages.map((message, index) => (
                         <Message key={index} message={message} handleDeleteMessage={handleDeleteMessage} />
                         ))}
-                        <Grid item xs={11}>
-                        <TextField
-                            id="outlined-basic-email"
+                        <Grid item xs>
+                        <CssTextField
                             label="Type Something"
                             value={message}
                             onChange={handleNewMessageChange}
                             onKeyPress={handleKeyPress}
                             fullWidth
+                            sx={{ input: { color: '#8b8b90' } }}
                         />
                         </Grid>
-                    </Grid>
-                </List>
-            <Divider />
+                </Grid>
+            </Grid>
+            <Grid item alignContent="right">
+                    <List>
+                        <h3>Members</h3>
+                        {chat.users.map((user) => (
+                            <ListItem>
+                                <ListItemIcon>
+                                    <Avatar/>
+                                </ListItemIcon>
+                                <ListItemText primary={user}></ListItemText>
+                            </ListItem>
+                        ))}
+                    </List>
+            </Grid>
+            </Stack>
         </Grid>
     );
 };
