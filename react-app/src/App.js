@@ -3,11 +3,24 @@ import Login from './Login';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut} from 'firebase/auth';
 import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
+import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack} from '@mui/material';
 import { styled } from '@mui/system';
 // import SockJS from 'sockjs-client';
 // import { Stomp } from '@stomp/stompjs';
+
+const CssTextField = styled(TextField)({
+    backgroundColor: "#383840",
+    "& .MuiInputBase-root": {
+        "& input": {
+            color: 'white'
+        }
+    }, 
+    "& .MuiInputLabel-root": {
+        color: '#8b8b90'
+    },
+});
 
 // Main application
 
@@ -19,11 +32,12 @@ const App = () => {
     const [id, setId] = useState(0); // Add this line to manage `id` using useState
     const [inputEmail, setInputEmail] = useState("");
     const [users, setUsers] = useState([]);
-    const [chatName, setChatName] = useState("My Chat ");
+    const [chatName, setChatName] = useState("New Chat ");
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [userName, setUserName] = useState("");
     const [newError, setNewError] = useState("");
+    const [servers, setServers] = useState([]);
     
     const theme = createTheme();
 
@@ -39,15 +53,6 @@ const App = () => {
         m: 1
     }
     
-    const CssTextField = styled(TextField)({
-        backgroundColor: "#383840",
-        "& .MuiInputBase-root": {
-            "& input": {
-                color: 'white'
-            }
-        }
-    });
-
     const textSX = {
         color: '#f2f3f5',
         m: 2,
@@ -135,6 +140,26 @@ const App = () => {
             }));
             setChats(newChats);
         };
+
+        const fetchServers = async () => {
+            console.log("getting servers");
+            const response = await fetch(`/server/id/` + id, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+            const newServers = await Promise.all(data.map(async entry => {
+                return {
+                    name: entry["serverName"]
+                };
+            }));
+            setServers(newServers);
+            console.log(newServers);
+        };
+        fetchServers();
 
         fetchGroupChats();
     }, [loggedIn, id]);
@@ -297,9 +322,11 @@ const App = () => {
                                         id="name"
                                         placeholder="Chat Name"
                                         size="15"
+                                        value={chatName}
                                         onChange={(event) => {setChatName(event.target.value);}}
                                         error={newError!==""}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                        key={id+"_create"}
                                     />
                                     <CssTextField
                                         type="text" 
@@ -312,6 +339,7 @@ const App = () => {
                                         error={newError!==""}
                                         helperText={newError}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                        
                                     />
                                     </Stack>
                                     <Divider/>
@@ -327,9 +355,11 @@ const App = () => {
                                         id="name"
                                         placeholder="Username"
                                         size="15"
+                                        value={userName}
                                         onChange={(event) => {setUserName(event.target.value);}}
                                         error={newError!==""}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
+                                        autoFocus
                                     />
                                     <CssTextField
                                         type="text" 
@@ -337,19 +367,19 @@ const App = () => {
                                         placeholder="Email"
                                         size="85"
                                         required
-                                        value={users} 
+                                        value={inputEmail} 
                                         onChange={(event) => {setInputEmail(event.target.value);}} 
                                         error={newError!==""}
                                         helperText={newError}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
                                     />
                                     <CssTextField
-                                        type="text" 
+                                        type="password" 
                                         id="users" 
                                         placeholder="Password"
                                         size="85"
                                         required
-                                        value={users} 
+                                        value={inputPassword} 
                                         onChange={(event) => {setInputPassword(event.target.value);}} 
                                         error={newError!==""}
                                         helperText={newError}
@@ -363,9 +393,11 @@ const App = () => {
                         
                     </Grid>
                 </Grid>
-                <Grid sx={textSX}>
-                    <GroupChatList id ={id} loggedIn = {loggedIn} chats = {chats} setChats = {setChats}/>
-                </Grid>
+                <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem/>}>
+                        <ServerList id ={id} loggedIn = {loggedIn} servers = {servers} setServers = {setServers}/>
+                        <GroupChatList id ={id} loggedIn = {loggedIn} chats = {chats} setChats = {setChats}/>
+                </Stack>
+                
             </ThemeProvider>
         </div>
       );

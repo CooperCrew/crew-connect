@@ -11,6 +11,14 @@ import { styled } from '@mui/system';
 
 const theme = createTheme();
 
+const CssTextField = styled(TextField)({
+  backgroundColor: "#383840",
+  "& .MuiInputLabel-root": {
+      color: '#8b8b90'
+  },
+  
+});
+
 
 // Login Screen
 
@@ -79,14 +87,6 @@ const Login = ({onLogin}) => {
         setIsCreatingAccount(!isCreatingAccount);
     };
 
-    const CssTextField = styled(TextField)({
-      backgroundColor: "#383840",
-      "& .MuiInputLabel-root": {
-          color: '#8b8b90'
-      },
-      
-    });
-
     const buttonSX = {
       "&:hover": {
           backgroundColor: 'lightblue'
@@ -141,9 +141,8 @@ const Login = ({onLogin}) => {
               name="email"
               autoComplete="email"
               value={username}
-              error={loginErrorMessage!==""}
               onChange={(e) => setUsername(e.target.value)}
-              autoFocus
+              error={loginErrorMessage!==""}
               sx={{ input: { color: '#8b8b90' } }}
             />
             <CssTextField
@@ -154,11 +153,11 @@ const Login = ({onLogin}) => {
               label="Password"
               type="password"
               id="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={loginErrorMessage!==""}
               helperText={loginErrorMessage}
-              autoComplete="current-password"
               sx={{ input: { color: '#8b8b90' } }}
             />
             <Button
@@ -253,9 +252,10 @@ const Login = ({onLogin}) => {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              autoComplete="password"
               error={createErrorMessage!==""}
               sx={{ input: { color: '#8b8b90' } }}
+              autoFocus
             />
             <CssTextField
               margin="normal"
@@ -271,6 +271,7 @@ const Login = ({onLogin}) => {
               error={createErrorMessage!==""}
               helperText={createErrorMessage}
               sx={{ input: { color: '#8b8b90' } }}
+              autoFocus
             />
             <Button
               type="submit"

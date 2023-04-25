@@ -110,9 +110,9 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
 
     return (
     <Grid container>
-        <Grid item xs={3}>
+        <Grid item sx={{width: '20%'}}>
             <List>
-            <h3>Your Chats</h3>
+            <h3>Channels</h3>
             {chats.map((chat) => (
                 <ListItem button key={chat.id} onClick={() => handleSelectChat(chat.id)}>
                 <ListItemIcon>
@@ -123,7 +123,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
                 ))}
             </List>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item sx={{width: '80%'}}>
             {selectedChatId && (
                 <GroupChat
                     chat={chats.find((chat) => chat.id === selectedChatId)}
