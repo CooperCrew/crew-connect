@@ -3,6 +3,13 @@ import { Grid, TextField, List, Divider, Link, Button, Stack, ListItem, ListItem
 import { styled } from '@mui/system';
 import Message from './Message';
 
+const CssTextField = styled(TextField)({
+    backgroundColor: "#383840",
+    "& .MuiInputLabel-root": {
+            color: '#8b8b90'
+    }
+});
+
 const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect}) => { 
     const [message, setMessage] = useState('');
 
@@ -14,13 +21,6 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
         color: 'white',
         m: 1
     }
-
-    const CssTextField = styled(TextField)({
-        backgroundColor: "#383840",
-        "& .MuiInputLabel-root": {
-                color: '#8b8b90'
-        }
-    });
 
     const handleSendMessage = async (message) => {
         try {
@@ -147,7 +147,7 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
     return (
         <Grid item xs={9}>
             <Stack direction = "row" spacing={2} divider={<Divider orientation="vertical" flexItem />}>
-            <Grid item xs alignContent="left">
+            <Grid item alignContent="left" sx={{width: '99.5%'}}>
                 <Stack direction = "row" spacing={2}>
                     <Grid item xs alignContent="left">
                         <h3>{chat.name}</h3>
@@ -175,7 +175,7 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                         </Grid>
                 </Grid>
             </Grid>
-            <Grid item alignContent="right">
+            <Grid item alignContent="right" sx={{width: '0.5%'}}>
                     <List>
                         <h3>Members</h3>
                         {chat.users.map((user) => (
