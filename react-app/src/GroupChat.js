@@ -23,6 +23,12 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
     }
 
     const handleSendMessage = async (message) => {
+
+        // Check for empty message
+        if (message === "") {
+            return;
+          }
+
         try {
           connect();
           let messageToSend = {
@@ -32,6 +38,8 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
             timeSent: Math.floor(Date.now() / 1000),
             "messageId": 0,
           };
+
+          
     
           console.log(messageToSend);
           // Send the message to the server
@@ -87,10 +95,11 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
     }
     
     const handleNewMessageChange = (event) => {
-        if (event.target.value === "") {
+        setMessage(event.target.value);
+        if (event.target.value.toString() === "") {
+            setMessage("");
             return;
         }
-        setMessage(event.target.value);
     }
 
     const handleDeleteMessage = async (messageId, senderId) => {
@@ -102,17 +111,17 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
             await fetch(`/message/${messageId}`, {
                 method: 'DELETE',
             });
-         //   const updatedChats = chats.map(chat => {
-           //     if (chat.id === selectedChatId) {
-           //         return {
-            //            ...chat,
-              //          messages: chat.messages.filter(message => message.id !== messageId),
-               //     };
-              //  }
-              //  return chat;
-           // });
+           const updatedChats = chats.map(chat => {
+               if (chat.id === selectedChatId) {
+                   return {
+                       ...chat,
+                       messages: chat.messages.filter(message => message.id !== messageId),
+                   };
+               }
+               return chat;
+           });
           
-           // setChats(updatedChats);
+           setChats(updatedChats);
             let DeleteMessage = {
                 groupChatId: selectedChatId,
                 userId: id,
@@ -165,6 +174,9 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                         ))}
                         <Grid item xs>
                         <CssTextField
+                            type="text"
+                            id="message"
+                            name="message"
                             label="Type Something"
                             value={message}
                             onChange={handleNewMessageChange}
