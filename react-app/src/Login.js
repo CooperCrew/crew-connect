@@ -48,13 +48,14 @@ const Login = ({onLogin}) => {
       
     // Account creation handler
     const handleCreateAccount = async (event) => {
+      var bad = false;
+      
         event.preventDefault();
         if (password !== confirmPassword) {
           setCreateErrorMessage('Passwords do not match!');
           return;
         }
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           let jsonData = {
             password: password,
             username: username,
@@ -70,15 +71,34 @@ const Login = ({onLogin}) => {
           }).then(async (response) => {
             const data = await response.json();
             console.log(data);
-            if (!response.ok) {
+            if (data.error === "Internal Server Error") {
+              throw new SyntaxError("Bad Username");
+            }
+            else if (!response.ok) {
               const error = (data && data.message) || response.statusText;
               return console.error(error);
             }
+          }).catch( error => {
+            setCreateErrorMessage("Username already exists!");
+            bad = true;
+            return;
+          }).finally(async () => {
+            if (!bad) {
+              setIsCreatingAccount(false);
+              return;
+            }
           });
-          setIsCreatingAccount(false);
-        } catch (error) {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        } 
+        catch (error) {
           console.error("Error creating account:", error);
-          setCreateErrorMessage("Error creating account.");
+          if (error.toString().substring(0, 8)==="Firebase") {
+            setCreateErrorMessage("Email already exists!");
+          }
+          else {
+            setCreateErrorMessage("Error creating account.");
+          }
+          
         }
       };
 
