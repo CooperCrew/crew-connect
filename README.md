@@ -45,3 +45,47 @@ Crew Connect does not take security seriously, because we know how not important
 
 If you have any questions or issues with Crew Connect, you can contact our support team, who will try their best to help you. If they can't, they'll just send you some funny memes to cheer you up. You can reach us at support@crew-connect.com. We can't wait to hear from you, even if you're just calling to say hi!
 
+## Ethics: OUR STRONG ETHICAL STANDARDS
+- 1.06. Be fair and avoid deception in all statements, particularly public ones, concerning software or related documents, methods and tools.
+    - We are fair, and not deceptive, we state in our main readme.md that the app is not secure, and do not try to give the illusion of security.
+- 2.02. Not knowingly use software that is obtained or retained either illegally or unethically.
+    - We only use packages and software that we have the proper licensing for. 
+- 5.11. Not ask a software engineer to do anything inconsistent with this Code.
+    - Not only have we not asked any software enginner to do anything inconsistent with this code, we have actually encoranged following the code, by writing this document
+- 6.02. Promote public knowledge of software engineering.
+    - By Open Sourcing our project we are promoting public knowledge of software enginnering
+- 6.10. Avoid associations with businesses and organizations which are in conflict with this code.
+    - Crew Connect *strongly* dis-associates from businesses and organizations which are in conflict our high ethical standards, which are much higher than the ACM Code.
+- 7.01. Encourage colleagues to adhere to this Code.
+    -  Here, we memebers of Crew Connect *strongly*, and *passionately* encourage our colleagues to adhere to the ACM Code.
+- 7.08. In situations outside of their own areas of competence, call upon the opinions of other professionals who have competence in that area.
+    -  There are several times throughout this project in which we have called upon the opinions of other professionals, especially CHAT-GPT and [Gary Kim](https://garykim.dev). 
+-  8.03. Improve their ability to produce accurate, informative, and well-written documentation.
+    - We at crew connect have taken many steps to learn about and produce accurate, informative, and well-written documentation, that explains our code. We have *even* utilized tools such as postman to help with creating simple to read documentation 
+- 8.07 Not give unfair treatment to anyone because of any irrelevant prejudices.
+    - We do not treat anyone unfairly, even civies, because of any irrelevant prejudices - we even support civies in software!
+- 8.08. Not influence others to undertake any action that involves a breach of this Code.
+    - We have never, and will never pay anyone to take an action (or in-action) that would result in a breach of this code
+- 8.09. Recognize that personal violations of this Code are inconsistent with being a professional software engineer.
+    - We at CREWCONNECT recognize that personal violations of this ACM CODE OF ETHICS are inconsistent with being a professional software engineer, and we have shown as such by writing about it here.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
