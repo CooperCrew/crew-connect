@@ -25,6 +25,13 @@ public class ServerDAO extends DataAccessObject {
     "JOIN server_groupchats sg ON ugc.gc_id = sg.gc_id " +
     "JOIN servers s ON sg.server_id = s.server_id " +
     "WHERE u.user_id = ?";
+    public static final String INSERT_USER_SERVER = "INSERT INTO users_servers (server_id, user_id) VALUES (?, ?)";
+    public static final String GET_USERS_BY_SERVER_ID = "SELECT u.user_id, u.username, u.password, u.email, u.status FROM users u JOIN users_servers us ON u.user_id = us.user_id WHERE us.server_id = ?";
+    public static final String GET_USER_GROUPCHATS_BY_SERVER_ID = "SELECT gc.gc_id, gc.group_name, gc.group_size, gc.date_created " +
+        "FROM groupchats gc " +
+        "JOIN users_gc ugc ON gc.gc_id = ugc.gc_id " +
+        "JOIN server_groupchats sg ON gc.gc_id = sg.gc_id " +
+        "WHERE sg.server_id = ? AND ugc.user_id = ?";
 
     public ServerDAO(Connection connection) {
         super(connection);
@@ -134,4 +141,63 @@ public class ServerDAO extends DataAccessObject {
         }
         return servers;
     }
+
+    public void addUserToServer(long serverId, long userId) {
+        try (PreparedStatement statement = this.connection.prepareStatement(INSERT_USER_SERVER);) {
+            statement.setLong(1, serverId);
+            statement.setLong(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<User> getUsersByServerId(long serverId) {
+        List<User> users = new ArrayList<>();
+
+        try (PreparedStatement statement = this.connection.prepareStatement(GET_USERS_BY_SERVER_ID);) {
+            statement.setLong(1, serverId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getLong("user_id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setStatus(rs.getString("status"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        return users;
+    }
+
+    public List<Groupchat> getUserGroupChatsByServerId(long serverId, long userId) {
+    List<Groupchat> groupchats = new ArrayList<>();
+
+    try (PreparedStatement statement = this.connection.prepareStatement(GET_USER_GROUPCHATS_BY_SERVER_ID);) {
+        statement.setLong(1, serverId);
+        statement.setLong(2, userId);
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            Groupchat groupchat = new Groupchat();
+            groupchat.setGroupChatId(rs.getLong("gc_id"));
+            groupchat.setGroupName(rs.getString("group_name"));
+            groupchat.setGroupSize(rs.getInt("group_size"));
+            groupchat.setDateCreated(rs.getString("date_created"));
+            groupchats.add(groupchat);
+        }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return groupchats;
+    }
 }
+

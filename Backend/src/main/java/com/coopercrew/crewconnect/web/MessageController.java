@@ -13,6 +13,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import com.coopercrew.crewconnect.DatabaseConnectionManager;
 import com.coopercrew.crewconnect.*;
+import com.coopercrew.crewconnect.User;
+import com.coopercrew.crewconnect.UserDAO;
+
+
 
 @RestController
 @CrossOrigin
@@ -67,16 +71,18 @@ public class MessageController {
         try {
             Connection connection = dcm.getConnection();
             MessageDAO messageDAO = new MessageDAO(connection);
+            UserDAO userDAO = new UserDAO(connection);
 
-           long messageID = messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
+            long messageID = messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
             message.setMessageId(messageID);
-            }
-        catch(SQLException e) {
+            User user = userDAO.findById(message.getUserId());
+            String username = user.getUsername();
+            message.setUsername(username);
+        } catch(SQLException e) {
             e.printStackTrace();
         }
         return message;
     }
-
 
 
 

@@ -48,59 +48,39 @@ const Login = ({onLogin}) => {
       
     // Account creation handler
     const handleCreateAccount = async (event) => {
-      var bad = false;
-      
-        event.preventDefault();
-        if (password !== confirmPassword) {
-          setCreateErrorMessage('Passwords do not match!');
-          return;
-        }
-        try {
-          let jsonData = {
-            password: password,
-            username: username,
-            email: email,
-            status: "Offline",
-          };
-          fetch(`/user/register`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(jsonData),
-          }).then(async (response) => {
-            const data = await response.json();
-            console.log(data);
-            if (data.error === "Internal Server Error") {
-              throw new SyntaxError("Bad Username");
-            }
-            else if (!response.ok) {
-              const error = (data && data.message) || response.statusText;
-              return console.error(error);
-            }
-          }).catch( error => {
-            setCreateErrorMessage("Username already exists!");
-            bad = true;
-            return;
-          }).finally(async () => {
-            if (!bad) {
-              setIsCreatingAccount(false);
-              return;
-            }
-          });
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        } 
-        catch (error) {
-          console.error("Error creating account:", error);
-          if (error.toString().substring(0, 8)==="Firebase") {
-            setCreateErrorMessage("Email already exists!");
+      event.preventDefault();
+      if (password !== confirmPassword) {
+        setCreateErrorMessage('Passwords do not match!');
+        return;
+      }
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        let jsonData = {
+          password: password,
+          username: username,
+          email: email,
+          status: "Offline",
+        };
+        fetch(`/user/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jsonData),
+        }).then(async (response) => {
+          const data = await response.json();
+          console.log(data);
+          if (!response.ok) {
+            const error = (data && data.message) || response.statusText;
+            return console.error(error);
           }
-          else {
-            setCreateErrorMessage("Error creating account.");
-          }
-          
-        }
-      };
+        });
+        setIsCreatingAccount(false);
+      } catch (error) {
+        console.error("Error creating account:", error);
+        setCreateErrorMessage("Error creating account.");
+      }
+    };
 
     // Toggle for the screen for creating an account
     const toggleCreateAccount = () => {

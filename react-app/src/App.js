@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Login from './Login';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut} from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateEmail, updatePassword} from 'firebase/auth';
 import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
 import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack} from '@mui/material';
+import { Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import { styled } from '@mui/system';
 // import SockJS from 'sockjs-client';
 // import { Stomp } from '@stomp/stompjs';
@@ -38,6 +38,10 @@ const App = () => {
     const [userName, setUserName] = useState("");
     const [newError, setNewError] = useState("");
     const [servers, setServers] = useState([]);
+    const [serverUsers, setServerUsers] = useState([]);
+    const [selectedServer, setSelectedServer] = useState(null);
+    const usersSelectRef = useRef();
+
     
     const theme = createTheme();
 
@@ -91,77 +95,27 @@ const App = () => {
 
     // use effect hook for getting groupchats and contents
     useEffect(() => {
-        // if (!loggedIn) return;
-        const fetchGroupChatUsers = async (groupChatId) => {
-            console.log("got here 2");
-            const response = await fetch(`/groupchats/` + groupChatId + `/users`, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            const data = await response.json();
-            return data.map(user => user.username);
-        };
-    
-        const fetchGroupChatMessages = async (groupChatId) => {
-            const response = await fetch(`/message/groupID/` + groupChatId, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            const data = await response.json();
-            return data.map(message => ({
-                id: message.messageId,
-                sender: message.userId,
-                text: message.message
-            }));
-        };
-    
-        const fetchGroupChats = async () => {
-            console.log("got here 3");
-            const response = await fetch(`/groupchats/userId/` + id, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-            const data = await response.json();
-            const newChats = await Promise.all(data.map(async entry => {
-            const users = await fetchGroupChatUsers(entry["groupChatId"]);
-            const messages = await fetchGroupChatMessages(entry["groupChatId"]);
-            return {
-                id: entry["groupChatId"],
-                users,
-                name: entry["groupName"],
-                messages,
-            };
-            }));
-            setChats(newChats);
-        };
-
+        if (!loggedIn) return;
         const fetchServers = async () => {
             console.log("getting servers");
-            const response = await fetch(`/server/id/` + id, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json"
-                }
+            const response = await fetch(`/servers/userId/${encodeURIComponent(id)}`, {
+              method: 'GET',
+              headers: {
+                "Content-Type": "application/json"
+              }
             });
             const data = await response.json();
             console.log(data);
-            const newServers = await Promise.all(data.map(async entry => {
-                return {
-                    name: entry["serverName"]
-                };
-            }));
+            const newServers = data.map(entry => {
+              return {
+                id: entry.serverId,
+                name: entry.serverName
+              };
+            });
             setServers(newServers);
             console.log(newServers);
         };
         fetchServers();
-
-        fetchGroupChats();
     }, [loggedIn, id]);
 
     // Showing the login page
@@ -240,6 +194,15 @@ const App = () => {
                     },
                 }).catch(error => console.error("Error in adding users fetch:", error));
             }
+
+            // add groupchat to server
+            await fetch(`/server/${selectedServer.id}/groupchat/${groupChatId}`, {
+                method: 'PUT',
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }).catch(error => console.error("Error in adding group chat to server fetch:", error));
+
             const newChat = { id: groupChatId, users, name, messages: [] };
             setChats([...chats, newChat]);
             setNewError("");
@@ -251,6 +214,7 @@ const App = () => {
 
     // Function for toggling the popup
     const togglePopup = () => {
+        console.log(users);
         setIsOpen(!isOpen);
     }
 
@@ -263,13 +227,80 @@ const App = () => {
         event.preventDefault();
         handleCreateChat(users, chatName);
         togglePopup();
-    };
+    };    
 
     // Handler for when the form to change the account info
-    const handlePopup2Create = (event) => {
-        alert("New Info: \n"+"Username: "+ userName +"\nEmail: "+inputEmail+"\nPassword: "+inputPassword);
-        togglePopup2();
-    };
+    const handlePopup2Create = async (event) => {
+        try {
+            const userId = id; // Replace with the correct user ID if necessary
+        
+            // Update username
+            await fetch(`/user/updateUsername`, {
+                method: "PUT",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                userId: userId,
+                username: userName,
+                }),
+            });
+        
+            // Update email and password in Firebase
+            const auth = getAuth();
+            const user = auth.currentUser;
+        
+            if (user) {
+                // Update email in Firebase
+                await updateEmail(user, inputEmail);
+        
+                // Update email in the database
+                await fetch(`/user/updateEmail`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    email: inputEmail,
+                }),
+                });
+        
+                // Update password in Firebase
+                await updatePassword(user, inputPassword);
+        
+                // Update password in the database
+                await fetch(`/user/updatePassword`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    password: inputPassword,
+                }),
+                });
+            } else {
+                throw new Error("User not logged in");
+            }
+        
+            alert(
+                "New Info: \n" +
+                "Username: " +
+                userName +
+                "\nEmail: " +
+                inputEmail +
+                "\nPassword: " +
+                inputPassword
+            );
+            togglePopup2();
+            } catch (error) {
+            console.error("Error updating account info:", error);
+            alert("An error occurred while updating account info. Please try again.");
+            }
+        };
+    
+      
 
     // Return main HTML for home page
     return (
@@ -328,19 +359,24 @@ const App = () => {
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
                                         key={id+"_create"}
                                     />
-                                    <CssTextField
-                                        type="text" 
-                                        id="users" 
-                                        placeholder="Users"
-                                        size="85"
-                                        required
-                                        value={users} 
-                                        onChange={(event) => setUsers(event.target.value.split(","))} 
-                                        error={newError!==""}
-                                        helperText={newError}
-                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
-                                        
-                                    />
+                                    <FormControl sx={{ m: 2 }}>
+                                    <InputLabel id="users-label">Users</InputLabel>
+                                    <Select
+                                        labelId="users-label"
+                                        id="users"
+                                        multiple
+                                        value={users}
+                                        onChange={(event) => setUsers(event.target.value)}
+                                        sx={{ minWidth: 200, input: { color: '#8b8b90' } }}
+                                        ref={usersSelectRef}
+                                    >
+                                        {serverUsers.map((user) => (
+                                            <MenuItem key={user.id} value={user.username}>
+                                                {user.username}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                    </FormControl>
                                     </Stack>
                                     <Divider/>
                                     <Button onClick={handlePopupCreate} sx={buttonSX}>Create</Button> <Button onClick={togglePopup} sx={buttonSX}>CANCEL</Button>
@@ -393,9 +429,9 @@ const App = () => {
                         
                     </Grid>
                 </Grid>
-                <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem/>}>
-                        <ServerList id ={id} loggedIn = {loggedIn} servers = {servers} setServers = {setServers}/>
-                        <GroupChatList id ={id} loggedIn = {loggedIn} chats = {chats} setChats = {setChats}/>
+                <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
+                    <ServerList id={id} loggedIn={loggedIn} servers={servers} setServers={setServers} serverUsers={serverUsers} 
+                        setServerUsers={setServerUsers} setChats={setChats} chats={chats} setSelectedServer={setSelectedServer} selectedServer={selectedServer} />
                 </Stack>
                 
             </ThemeProvider>

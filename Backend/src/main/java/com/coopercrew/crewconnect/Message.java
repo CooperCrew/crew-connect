@@ -7,6 +7,7 @@ public class Message implements DataTransferObject{
     private Long time_sent;
     private String message;
     private long user_id;
+    private String username;
     public long getId(){
         return message_id; //?!is this needed
     }
@@ -48,6 +49,14 @@ public class Message implements DataTransferObject{
     }
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String toString(){

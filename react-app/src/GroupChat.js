@@ -22,13 +22,15 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
         m: 1
     }
 
-    const handleSendMessage = async (message) => {
+    if (!chat) {
+        return null;
+    }
 
+    const handleSendMessage = async (message) => {
         // Check for empty message
         if (message === "") {
             return;
           }
-
         try {
           connect();
           let messageToSend = {
@@ -38,9 +40,6 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
             timeSent: Math.floor(Date.now() / 1000),
             "messageId": 0,
           };
-
-          
-    
           console.log(messageToSend);
           // Send the message to the server
           const response = await fetch("/message", {
@@ -62,6 +61,7 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                         {
                             id: data.messageId,
                             sender: id,
+                            senderUsername: data.username,
                             text: message,
                         },
                         ],

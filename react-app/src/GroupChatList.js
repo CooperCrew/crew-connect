@@ -40,6 +40,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
                                 {
                                     id: newMessage.messageId,
                                     sender: newMessage.userId,
+                                    senderUsername: newMessage.username,
                                     text: newMessage.message,
                                 },
                             ],
@@ -87,6 +88,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
                                 ? data.map((message) => ({
                                       id: message.messageId,
                                       sender: message.userId,
+                                      senderUsername: message.username,
                                       text: message.message,
                                   }))
                                 : [],

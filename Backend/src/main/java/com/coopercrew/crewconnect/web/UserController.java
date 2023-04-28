@@ -124,6 +124,21 @@ public class UserController {
             e.printStackTrace();
         }
     }
+
+    // Update username
+    @PutMapping("user/updateUsername")
+    public void updateUsername(@RequestBody User updateUser) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname,
+            "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            UserDAO userDAO = new UserDAO(connection);
+            userDAO.updateUserUsername(updateUser.getUsername(), updateUser.getUserId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // update status of user
     @PutMapping("user/{id}/updateStatus/{status}")
     public void updateStatus(@PathVariable long id, @PathVariable String status){

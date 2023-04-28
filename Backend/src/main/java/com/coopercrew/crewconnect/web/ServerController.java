@@ -13,6 +13,8 @@ import com.coopercrew.crewconnect.DatabaseConnectionManager;
 import com.coopercrew.crewconnect.Groupchat;
 import com.coopercrew.crewconnect.Server;
 import com.coopercrew.crewconnect.ServerDAO;
+import com.coopercrew.crewconnect.User;
+import com.coopercrew.crewconnect.UserDAO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -102,7 +104,7 @@ public class ServerController {
             e.printStackTrace();
         }
     }
-    // get all servers a groupchat is a part of
+    // get all servers a user is a part of
     @GetMapping("/servers/userId/{user_id}")
     public List<Server> findServersByUserId(@PathVariable long user_id) {
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
@@ -117,4 +119,47 @@ public class ServerController {
         }
         return servers;
     }
+
+    // Add a user to a server
+    @PutMapping("/server/{server_id}/user/{user_id}")
+    public void addUserToServer(@PathVariable long server_id, @PathVariable long user_id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
+        try {
+            Connection connection = dcm.getConnection();
+            ServerDAO serverDAO = new ServerDAO(connection);
+            serverDAO.addUserToServer(server_id, user_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Get all users in a server
+    @GetMapping("/server/{server_id}/users")
+    public List<User> getUsersByServerId(@PathVariable long server_id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
+        List<User> users = new ArrayList<>();
+        try {
+            Connection connection = dcm.getConnection();
+            ServerDAO serverDAO = new ServerDAO(connection);
+            users = serverDAO.getUsersByServerId(server_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+    // get groupchats that a user is in based off server id and user id.
+    @GetMapping("/server/{server_id}/user/{user_id}/groupchats")
+        public List<Groupchat> getUserGroupChatsByServerId(@PathVariable long server_id, @PathVariable long user_id) {
+            DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
+            List<Groupchat> groupchats = new ArrayList<>();
+            try {
+                Connection connection = dcm.getConnection();
+                ServerDAO serverDAO = new ServerDAO(connection);
+                groupchats = serverDAO.getUserGroupChatsByServerId(server_id, user_id);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return groupchats;
+        }
+
 }
