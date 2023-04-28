@@ -1,0 +1,10 @@
+com/coopercrew/crewconnect/MessageDAOTest.class
+com/coopercrew/crewconnect/web/ServerControllerTest.class
+com/coopercrew/crewconnect/JoinsDAOTest.class
+com/coopercrew/crewconnect/web/UserControllerTest.class
+com/coopercrew/crewconnect/TestConfiguration.class
+com/coopercrew/crewconnect/GroupchatDAOTest.class
+com/coopercrew/crewconnect/CrewconnectApplicationTests.class
+com/coopercrew/crewconnect/web/GroupchatControllerTest.class
+com/coopercrew/crewconnect/UserDAOTest.class
+com/coopercrew/crewconnect/ServerDAOTest.class
