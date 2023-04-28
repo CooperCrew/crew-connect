@@ -333,11 +333,13 @@ const App = () => {
                             sx={buttonSX}>
                             Log Out
                         </Button>
-                        <Button 
-                            onClick={togglePopup}
-                            sx={buttonSX}>
-                            New Chat
-                        </Button>
+                        {selectedServer && (
+                            <Button 
+                                onClick={togglePopup}
+                                sx={buttonSX}>
+                                New Chat
+                            </Button>
+                        )}
                         <Button 
                             onClick={togglePopup2}
                             sx={buttonSX}>
@@ -432,7 +434,23 @@ const App = () => {
                 <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
                     <ServerList id={id} loggedIn={loggedIn} servers={servers} setServers={setServers} serverUsers={serverUsers} 
                         setServerUsers={setServerUsers} setChats={setChats} chats={chats} setSelectedServer={setSelectedServer} selectedServer={selectedServer} />
+                        {!selectedServer && (
+                            <Grid
+                            container
+                            spacing={0}
+                            direction="column"
+                            alignItems="center"
+                            justifyContent="center"
+                            style={{ minHeight: '50vh' }}
+                            >
+                          
+                          <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Welcome to CrewConnect!</Typography>
+                          <Typography variant="h7" className="header-message" sx={{color: 'white', m: 2}}>Select a Server to begin connecting.</Typography>
+                             
+                          </Grid> 
+                        )}
                 </Stack>
+                
                 
             </ThemeProvider>
         </div>
