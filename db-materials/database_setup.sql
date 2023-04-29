@@ -41,7 +41,7 @@ CREATE TABLE messages (
     gc_id bigint NOT NULL,
     user_id bigint NOT NULL,
     time_sent bigint NOT NULL,
-    message varchar(50) NOT NULL,
+    message varchar(1000) NOT NULL,
     PRIMARY KEY (msg_id),
     FOREIGN KEY (gc_id) REFERENCES groupchats(gc_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
