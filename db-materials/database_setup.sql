@@ -75,6 +75,14 @@ CREATE TABLE server_groupchats (
     PRIMARY KEY (gc_id)
 );
 
+CREATE TABLE users_servers (
+    server_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    FOREIGN KEY (server_id) REFERENCES servers(server_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    PRIMARY KEY (server_id, user_id)
+);
+
 
 -- Populate users table
 INSERT INTO users (username, password, email, status)
@@ -131,3 +139,13 @@ VALUES
 (1, 1),
 (1, 2),
 (2, 3);
+
+INSERT INTO users_servers (server_id, user_id)
+VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(2, 1),
+(2, 3),
+(2, 4);
