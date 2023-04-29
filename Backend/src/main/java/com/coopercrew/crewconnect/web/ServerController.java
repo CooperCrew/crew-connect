@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -28,16 +29,22 @@ public class ServerController {
 
     // create a new server - send server name as the json body
     @PostMapping("/server")
-    public void createServer(@RequestBody Server server) {
+    public String createServer(@RequestBody Server server) {
+        System.out.println("SERVER NAME SERVER NAME SERVER NAME SERVER NAME" + server.getServerName());
+        String inviteCode = UUID.randomUUID().toString();
+        server.setInviteCode(inviteCode);
+        System.out.println("INVITE CODE INVITE CODE INVITE CODE: " + server.getInviteCode());
         DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
         try {
             Connection connection = dcm.getConnection();
             ServerDAO serverDAO = new ServerDAO(connection);
-            serverDAO.createServer(server.getServerName());
+            serverDAO.createServer(server.getServerName(), server.getInviteCode());
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return server.getInviteCode();
     }
+
     // get a server object from server id
     @GetMapping("/server/id/{server_id}")
     public Server findByServerId(@PathVariable long server_id) {
@@ -149,17 +156,30 @@ public class ServerController {
     }
     // get groupchats that a user is in based off server id and user id.
     @GetMapping("/server/{server_id}/user/{user_id}/groupchats")
-        public List<Groupchat> getUserGroupChatsByServerId(@PathVariable long server_id, @PathVariable long user_id) {
-            DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
-            List<Groupchat> groupchats = new ArrayList<>();
-            try {
-                Connection connection = dcm.getConnection();
-                ServerDAO serverDAO = new ServerDAO(connection);
-                groupchats = serverDAO.getUserGroupChatsByServerId(server_id, user_id);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return groupchats;
+    public List<Groupchat> getUserGroupChatsByServerId(@PathVariable long server_id, @PathVariable long user_id) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
+        List<Groupchat> groupchats = new ArrayList<>();
+        try {
+            Connection connection = dcm.getConnection();
+            ServerDAO serverDAO = new ServerDAO(connection);
+            groupchats = serverDAO.getUserGroupChatsByServerId(server_id, user_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
+        return groupchats;
+    }
+    
+    @GetMapping("/server/invite/{inviteCode}")
+    public Server getServerByInviteCode(@PathVariable String inviteCode) {
+        DatabaseConnectionManager dcm = new DatabaseConnectionManager(hostname, "crewconnect3", "postgres", "password");
+        Server server = null;
+        try {
+            Connection connection = dcm.getConnection();
+            ServerDAO serverDAO = new ServerDAO(connection);
+            server = serverDAO.getServerByInviteCode(inviteCode);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return server;
+    }
 }

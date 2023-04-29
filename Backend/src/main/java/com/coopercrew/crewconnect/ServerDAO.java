@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerDAO extends DataAccessObject {
-    public static final String GET_BY_SERVER_ID = "SELECT server_id, server_name FROM servers WHERE server_id = ?";
-    public static final String GET_BY_SERVERNAME = "SELECT server_id, server_name FROM servers WHERE server_name = ?";
-    public static final String INSERT_SERVER = "INSERT INTO servers (server_name) VALUES (?)";
+    public static final String GET_BY_SERVER_ID = "SELECT server_id, server_name, invite_code FROM servers WHERE server_id = ?";
+    public static final String GET_BY_SERVERNAME = "SELECT server_id, server_name, invite_code FROM servers WHERE server_name = ?";    
+    public static final String INSERT_SERVER = "INSERT INTO servers (server_name, invite_code) VALUES (?, ?)";
     public static final String INSERT_SERVER_GROUPCHAT = "INSERT INTO server_groupchats (server_id, gc_id) VALUES (?, ?)";
     public static final String DELETE_SERVER = "DELETE FROM servers WHERE server_id = ?";
     public static final String GET_GROUPCHATS_BY_SERVER_ID = "SELECT gc.gc_id, gc.group_name, gc.group_size, gc.date_created FROM groupchats gc JOIN server_groupchats sg ON gc.gc_id = sg.gc_id WHERE sg.server_id = ?";
@@ -32,6 +32,7 @@ public class ServerDAO extends DataAccessObject {
         "JOIN users_gc ugc ON gc.gc_id = ugc.gc_id " +
         "JOIN server_groupchats sg ON gc.gc_id = sg.gc_id " +
         "WHERE sg.server_id = ? AND ugc.user_id = ?";
+    public static final String GET_SERVER_BY_INVITE_CODE = "SELECT server_id, server_name, invite_code FROM servers WHERE invite_code = ?";
 
     public ServerDAO(Connection connection) {
         super(connection);
@@ -42,7 +43,8 @@ public class ServerDAO extends DataAccessObject {
         while (rs.next()) {
             server.setServerId(rs.getLong("server_id"));
             server.setServerName(rs.getString("server_name"));
-        } 
+            server.setInviteCode(rs.getString("invite_code"));
+        }
     }
 
     public Server findByServerId(long id) {
@@ -70,9 +72,10 @@ public class ServerDAO extends DataAccessObject {
         return server;
     }
 
-    public void createServer(String serverName) {
+    public void createServer(String serverName, String inviteCode) {
         try (PreparedStatement statement = this.connection.prepareStatement(INSERT_SERVER);) {
             statement.setString(1, serverName);
+            statement.setString(2, inviteCode);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -198,6 +201,18 @@ public class ServerDAO extends DataAccessObject {
             throw new RuntimeException(e);
         }
         return groupchats;
+    }
+
+    public Server getServerByInviteCode(String inviteCode) {
+        Server server = new Server();
+        try (PreparedStatement statement = this.connection.prepareStatement(GET_SERVER_BY_INVITE_CODE);) {
+            statement.setString(1, inviteCode);
+            setServerAttributes(statement, server);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return server;
     }
 }
 
