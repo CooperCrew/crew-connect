@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Grid, TextField, List, Divider, Link, Button, Stack, ListItem, ListItemIcon, ListItemText, Avatar} from '@mui/material';
+import { Grid, TextField, List, Divider, Link, Button, Stack, ListItem, ListItemIcon, ListItemText, Avatar, Typography} from '@mui/material';
 import { styled } from '@mui/system';
 import Message from './Message';
 
@@ -170,7 +170,9 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                 </Stack>
                 <Grid item>
                         {chat.messages.map((message, index) => (
-                        <Message key={index} message={message} handleDeleteMessage={handleDeleteMessage} />
+                        <Message message={message} handleDeleteMessage={handleDeleteMessage} id = {id} 
+                            // this is to only display the username if the previous message sender is not the same as the current message sender
+                            shouldDisplayUsername={index === 0 || chat.messages[index - 1].sender !== message.sender}/>
                         ))}
                         <Grid item xs>
                         <CssTextField
@@ -188,6 +190,10 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                 </Grid>
             </Grid>
             <Grid item alignContent="right" sx={{width: '0.5%'}}>
+                    <h3>Server Invite Link</h3>
+                    <Link href="https://www.google.com" target="_blank" rel="noopener">
+                    Server Invite
+                    </Link>
                     <List>
                         <h3>Members</h3>
                         {chat.users.map((user) => (
