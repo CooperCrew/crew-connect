@@ -4,13 +4,11 @@ import React, { useState, useEffect } from 'react';
 import './index.css';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getAuth } from 'firebase/auth';
 import { auth } from './index';
-
 import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Paper, Box, Grid, Typography} from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
 
 const theme = createTheme();
-
 const CssTextField = styled(TextField)({
   backgroundColor: "#383840",
   "& .MuiInputLabel-root": {
@@ -18,17 +16,14 @@ const CssTextField = styled(TextField)({
   },
   
 });
-
-
 // Login Screen
-
 const Login = ({onLogin}) => {
-
     // Variables for logging in and creating an account
-
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [id, setId] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isCreatingAccount, setIsCreatingAccount] = useState(false);
     const [loginErrorMessage, setLoginErrorMessage] = React.useState("");
@@ -36,15 +31,23 @@ const Login = ({onLogin}) => {
 
     // Login handler
     const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-          const userCredential = await signInWithEmailAndPassword(auth, username, password);
-          onLogin(username, password);
-        } catch (error) {
+      e.preventDefault();
+      try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const response = await fetch(
+              `/user/email/${encodeURIComponent(email)}`
+          );
+          const data = await response.json();
+          setUsername(data.username);
+          setLoggedIn(true);
+          setId(data.userId);
+          response.ok && onLogin(data.username, email, password, true, data.userId);
+      } catch (error) {
           console.error("Error signing in:", error);
           setLoginErrorMessage("Invalid email and/or password!");
-        }
-    };
+      }
+  };
+  
       
     // Account creation handler
     const handleCreateAccount = async (event) => {
@@ -99,7 +102,6 @@ const Login = ({onLogin}) => {
 
     // HTML for login and account creation screens
     return (
-    
     <ThemeProvider theme={theme}>
     {!isCreatingAccount && (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -140,8 +142,8 @@ const Login = ({onLogin}) => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               error={loginErrorMessage!==""}
               sx={{ input: { color: '#8b8b90' } }}
             />
@@ -219,7 +221,7 @@ const Login = ({onLogin}) => {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="Username"
               label="Username"
               onChange={(event) => setUsername(event.target.value)}
               name="email"

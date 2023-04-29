@@ -42,11 +42,8 @@ const App = () => {
     const [selectedServer, setSelectedServer] = useState(null);
     const usersSelectRef = useRef();
 
-    
     const theme = createTheme();
-
     // CSS Specifications
-
     const buttonSX = {
         "&:hover": {
             backgroundColor: 'lightblue'
@@ -62,36 +59,32 @@ const App = () => {
         m: 2,
         backgroundColor: "#313338"
     };
-
     const av_src = "https://t3.ftcdn.net/jpg/00/64/67/52/360_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg";
-
-    //connect to socket
     // new useeffect hook for signing in with firebase auth
-    useEffect(() => {
-        if (!inputEmail || !inputPassword) return;
+    // useEffect(() => {
+    //     if (!inputEmail || !inputPassword) return;
     
-        const auth = getAuth();
-        signInWithEmailAndPassword(auth, inputEmail, inputPassword)
-          .then(async (userCredential) => {
-            const user = userCredential.user;
-            const userEmail = user.email;
-            // Fetch user data by email from your database
-            const response = await fetch(
-              `/user/email/${encodeURIComponent(userEmail)}`
-            );
-            const data = await response.json();
-            setId(data.userId);
-            setLoggedIn(true);
-            const response2 = await fetch(`/user/id/${encodeURIComponent(id)}`);
-            const data2 = await response2.json();
-            console.log("Getting Username");
-            console.log(data2.username);
-            setUserName(data2.username);
-          })
-          .catch((error) => {
-            console.error("Error logging in:", error.message);
-          })
-      }, [inputEmail, inputPassword]);   
+    //     const auth = getAuth();
+    //     signInWithEmailAndPassword(auth, inputEmail, inputPassword)
+    //       .then(async (userCredential) => {
+    //         const user = userCredential.user;
+    //         const userEmail = user.email;
+    //         // Fetch user data by email from your database
+    //         const response = await fetch(
+    //           `/user/email/${encodeURIComponent(userEmail)}`
+    //         );
+    //         const data = await response.json();
+    //         setId(data.userId);
+    //         setLoggedIn(true);
+    //         // why do we need a second fetch??? i dont think I made this or did I????-- Colin.
+    //         const response2 = await fetch(`/user/id/${encodeURIComponent(id)}`);
+    //         const data2 = await response2.json();
+    //         setUserName(data2.username);
+    //       })
+    //       .catch((error) => {
+    //         console.error("Error logging in:", error.message);
+    //       })
+    //   }, [inputEmail, inputPassword]);   
 
     // use effect hook for getting groupchats and contents
     useEffect(() => {
@@ -122,20 +115,35 @@ const App = () => {
     if (!loggedIn) {
         return (
           <Login
-            onLogin={(email, password) => {
+            onLogin={(userName, email, password, loggedIn, id) => {
+              setUserName(userName);
               setInputEmail(email);
               setInputPassword(password);
+              setLoggedIn(loggedIn);
+              setId(id)
             }}
           />
         );
       }
 
-    // Handler for logging out
+    // Handler for logging out, just reset all state variables to be sure that user is logged out.
     const handleLogout = () => {
         setLoggedIn(false);
         setInputEmail("");
         setInputPassword("");
+        setUserName("");
+        setChats([]);
+        setId(0);
+        setUsers([]);
+        setChatName("New Chat ");
+        setIsOpen(false);
+        setIsOpen2(false);
+        setNewError("");
+        setServers([]);
+        setServerUsers([]);
+        setSelectedServer(null);
     };
+    
 
     // Handler for creating a new chat
     const handleCreateChat = async (users, name) => {
@@ -232,9 +240,8 @@ const App = () => {
     // Handler for when the form to change the account info
     const handlePopup2Create = async (event) => {
         try {
-            const userId = id; // Replace with the correct user ID if necessary
-        
-            // Update username
+            const userId = id;
+            // update username
             await fetch(`/user/updateUsername`, {
                 method: "PUT",
                 headers: {
@@ -245,16 +252,11 @@ const App = () => {
                 username: userName,
                 }),
             });
-        
-            // Update email and password in Firebase
+            // update email and password in Firebase
             const auth = getAuth();
             const user = auth.currentUser;
-        
             if (user) {
-                // Update email in Firebase
                 await updateEmail(user, inputEmail);
-        
-                // Update email in the database
                 await fetch(`/user/updateEmail`, {
                 method: "PUT",
                 headers: {
@@ -265,11 +267,7 @@ const App = () => {
                     email: inputEmail,
                 }),
                 });
-        
-                // Update password in Firebase
                 await updatePassword(user, inputPassword);
-        
-                // Update password in the database
                 await fetch(`/user/updatePassword`, {
                 method: "PUT",
                 headers: {
@@ -283,25 +281,14 @@ const App = () => {
             } else {
                 throw new Error("User not logged in");
             }
-        
-            alert(
-                "New Info: \n" +
-                "Username: " +
-                userName +
-                "\nEmail: " +
-                inputEmail +
-                "\nPassword: " +
-                inputPassword
-            );
+            alert( "New Info: \n" + "Username: " + userName + "\nEmail: " + inputEmail + "\nPassword: " + inputPassword);
             togglePopup2();
             } catch (error) {
-            console.error("Error updating account info:", error);
-            alert("An error occurred while updating account info. Please try again.");
+                console.error("Error updating account info:", error);
+                alert("An error occurred while updating account info. Please try again.");
             }
         };
     
-      
-
     // Return main HTML for home page
     return (
         <div className="App" class="force-gray">
