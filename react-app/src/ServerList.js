@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid} from '@mui/material';
+import React, { useEffect } from 'react';
+import {ListItem, ListItemText, List, Grid} from '@mui/material';
 import GroupChatList from './GroupChatList';
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
+// import SockJS from 'sockjs-client';
+// import { Stomp } from '@stomp/stompjs';
 
 const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerUsers, setChats, chats, selectedServer, setSelectedServer, inviteCode}) => {
 
@@ -79,8 +79,8 @@ const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerU
   }, [selectedServer]);
 
   return (
-    <>
-      <List sx={{ width: '7%' }}>
+    <Grid container spacing={2} direction="row">
+      <Grid item xs={12} md={3} lg={2}><List>
         <h3>Servers</h3>
         {servers.map((server) => (
           <ListItem
@@ -93,8 +93,9 @@ const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerU
           <ListItemText primary={server.name}></ListItemText>
         </ListItem>
       ))}
-    </List>
+    </List></Grid>
     {selectedServer && (
+      <Grid item xs={12} md={9} lg={10}>
       <GroupChatList
         id={id}
         loggedIn={loggedIn}
@@ -103,8 +104,10 @@ const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerU
         serverUsers={serverUsers}
         selectedServer = {selectedServer}
       />
+      </Grid>
     )}
-  </>
+    
+  </Grid>
 );
 };
 
