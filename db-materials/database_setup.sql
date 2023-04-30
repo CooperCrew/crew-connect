@@ -28,7 +28,7 @@ CREATE SEQUENCE gc_seq start with 1;
 
 CREATE TABLE groupchats (
     gc_id bigint NOT NULL DEFAULT nextval('gc_seq'),
-    group_name varchar(50) NOT NULL,
+    group_name varchar(100) NOT NULL UNIQUE,
     group_size int NOT NULL DEFAULT 0,
     date_created date NOT NULL,
     PRIMARY KEY (gc_id)
@@ -59,10 +59,10 @@ CREATE SEQUENCE server_seq START WITH 1;
 
 CREATE TABLE servers (
     server_id bigint NOT NULL DEFAULT nextval('server_seq'),
-    server_name varchar(50) NOT NULL,
+    server_name varchar(100) NOT NULL,
+    invite_code varchar(100) NOT NULL UNIQUE,
     PRIMARY KEY (server_id)
 );
-
 
 -- we only primary key on gc_id because a groupchat should not be able to exist
 -- in two servers at once. Therefore, only one of each groupchat should exist in
@@ -128,10 +128,10 @@ VALUES
 (3, 4, 1672617600, 'Greetings everyone!');
 
 -- Populate servers table
-INSERT INTO servers (server_name)
+INSERT INTO servers (server_name, invite_code)
 VALUES
-('Server1'),
-('Server2');
+('Server1', '123e4567-e89b-12d3-a456-426614174000'),
+('Server2', '123e4567-e89b-12d3-a456-426614174001');
 
 -- Populate server_groupchats table
 INSERT INTO server_groupchats (server_id, gc_id)

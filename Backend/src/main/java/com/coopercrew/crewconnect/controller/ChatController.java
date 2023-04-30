@@ -25,7 +25,9 @@ public class ChatController {
      
         return Message;
     }
-
-
-
+    @MessageMapping("/server/{room}")
+            public Groupchat sendServerMessage(@DestinationVariable String room, @Payload Groupchat groupchat) {
+                    simpmessage.convertAndSend("/server/" + room,  groupchat);
+                    return groupchat;
+            }
 }
