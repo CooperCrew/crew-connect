@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid, Stack } from '@mui/material';
+import React, {useState} from 'react';
+import { ListItem, ListItemIcon, ListItemText, Avatar, List, Grid} from '@mui/material';
 import GroupChat from './GroupChat';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -29,7 +29,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats, inviteCode, selectedServ
     const OnMessageObtained = (payload) => {
         let newMessage = JSON.parse(payload.body);
         console.log(newMessage);
-        if(newMessage.timeSent != 0 && newMessage.userId !== id) {
+        if(newMessage.timeSent !== 0 && newMessage.userId !== id) {
             setChats((prevChats) => {
                 return prevChats.map((chat) => {
                     if (chat.id === newMessage.groupChatId ) {
@@ -50,7 +50,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats, inviteCode, selectedServ
                 });
             });
         }
-        if(newMessage.timeSent == 0) {
+        if(newMessage.timeSent === 0) {
             setChats((prevChats) => {
             return prevChats.map((chat) => {
                     if (chat.id === newMessage.groupChatId ) {

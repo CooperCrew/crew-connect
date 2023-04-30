@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid, Stack, Divider} from '@mui/material';
+import React, { useEffect } from 'react';
+import {ListItem, ListItemText, List, Grid} from '@mui/material';
 import GroupChatList from './GroupChatList';
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
+// import SockJS from 'sockjs-client';
+// import { Stomp } from '@stomp/stompjs';
 
 const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerUsers, setChats, chats, selectedServer, setSelectedServer, inviteCode}) => {
 

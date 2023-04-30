@@ -2,12 +2,10 @@ import React, {useState, useEffect, useRef} from 'react';
 import Login from './Login';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import JoinServer from "./JoinServer";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateEmail, updatePassword} from 'firebase/auth';
-import firebase from 'firebase/app';
-import GroupChatList from './GroupChatList';
+import { getAuth, signOut, updateEmail, updatePassword} from 'firebase/auth';
 import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link, Grid, AppBar, Toolbar, Typography, Paper, Tooltip, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
+import { Grid, Typography, Paper, Tooltip, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import { styled } from '@mui/system';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -471,15 +469,15 @@ const App = () => {
                             <Tooltip
                                 open={open}
                                 onClose={() => setOpen(false)}
-                                title={copyFeedback}
-                                leaveDelay={1000}
+                                title={<Typography fontSize={20}>{copyFeedback}</Typography>}
+                                leaveDelay={700}
                             >
-                                <Button
-                                onClick={() => copyToClipboard("http://142.93.251.255:3000/join-server/"+selectedServer.inviteCode)}
-                                sx={buttonSX}
-                                >
-                                Copy Server Invite Link to Clipboard
-                                </Button>
+                                    <Button
+                                    onClick={() => copyToClipboard("http://142.93.251.255:3000/join-server/"+selectedServer.inviteCode)}
+                                    sx={buttonSX}
+                                    >
+                                    Copy Server Invite Link to Clipboard
+                                    </Button>
                             </Tooltip>
                             
                         </Grid>

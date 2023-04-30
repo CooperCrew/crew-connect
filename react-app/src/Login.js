@@ -1,10 +1,10 @@
 // Imports
 
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import './index.css';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, getAuth } from 'firebase/auth';
 import { auth } from './index';
-import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Paper, Box, Grid, Typography} from '@mui/material'
+import { Button, CssBaseline, TextField, Link, Paper, Box, Grid, Typography} from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/system';
 // test
