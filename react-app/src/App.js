@@ -9,6 +9,7 @@ import { Grid, Typography, Paper, Tooltip, CssBaseline, Divider, TextField, Butt
 import { styled } from '@mui/system';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import logo from './icon.png';
 
 const CssTextField = styled(TextField)({
     backgroundColor: "#383840",
@@ -417,8 +418,11 @@ const App = () => {
     return (
         <div className="App" class="force-gray">
             <ThemeProvider theme={theme}>
-                <Grid container component={Paper} sx={{backgroundColor: "#313338"}}>
-                    <Grid item xs={12} >
+                <Grid container direction="row" component={Paper} sx={{backgroundColor: "#313338"}}>
+                    <Grid item sx={{ml: 2, mt: 2, mb: 3}}>
+                        <img src={logo} style={{width: 50, height: 50}}></img>
+                    </Grid>
+                    <Grid item sx={{mt: 1}}>
                         <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>CrewConnect</Typography>
                     </Grid>
                 </Grid>
