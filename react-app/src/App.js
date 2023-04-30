@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Login from './Login';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import JoinServer from "./JoinServer";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateEmail, updatePassword} from 'firebase/auth';
 import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
 import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
+import { Link, Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import { styled } from '@mui/system';
-// import SockJS from 'sockjs-client';
-// import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 
 const CssTextField = styled(TextField)({
     backgroundColor: "#383840",
@@ -23,7 +25,9 @@ const CssTextField = styled(TextField)({
 });
 
 // Main application
-
+var stompClient = null;
+let currentServer = null;
+var subscription = null;
 const App = () => {
     // Variable Declarations
     const [loggedIn, setLoggedIn] = useState(false); // Boolean for logging in
@@ -35,13 +39,52 @@ const App = () => {
     const [chatName, setChatName] = useState("New Chat ");
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
+    const [isOpen3, setIsOpen3] = useState(false);
     const [userName, setUserName] = useState("");
     const [newError, setNewError] = useState("");
     const [servers, setServers] = useState([]);
     const [serverUsers, setServerUsers] = useState([]);
     const [selectedServer, setSelectedServer] = useState(null);
+    const [newServerName, setNewServerName] = useState("");
+    const [inviteCode, setInviteCode] = useState("");
     const usersSelectRef = useRef();
+    const [connectedToSocket, setConnectedToSocket] = useState(false);
 
+    // whenever selectedServer changes connect
+    useEffect(() => {
+        if (selectedServer) {
+            currentServer = selectedServer.id;
+            connect();
+        }
+    }, [selectedServer]);
+
+    const connect = () => {
+        if (!connectedToSocket){
+          let Sock = new SockJS('/ws');
+          stompClient = Stomp.over(Sock);
+          setConnectedToSocket(true);
+          stompClient.connect({}, onConnect, onError);
+        } else {
+          if(subscription) {
+            subscription.unsubscribe();
+            subscription = stompClient.subscribe(`/server/${selectedServer.id}`, onGroupChatCreated);
+          }
+        }
+    }
+    
+    const onGroupChatCreated = (payload) => {
+        let newGroupchat = JSON.parse(payload.body);
+        setChats(prevChats => [...prevChats, newGroupchat]);
+    }
+
+    const onConnect = () => {
+        subscription = stompClient.subscribe(`/server/${selectedServer.id}`, onGroupChatCreated);
+    }
+
+    const onError = () => {
+        console.log("Error with server socket");
+    }
+    
     const theme = createTheme();
     // CSS Specifications
     const buttonSX = {
@@ -60,31 +103,6 @@ const App = () => {
         backgroundColor: "#313338"
     };
     const av_src = "https://t3.ftcdn.net/jpg/00/64/67/52/360_F_64675209_7ve2XQANuzuHjMZXP3aIYIpsDKEbF5dD.jpg";
-    // new useeffect hook for signing in with firebase auth
-    // useEffect(() => {
-    //     if (!inputEmail || !inputPassword) return;
-    
-    //     const auth = getAuth();
-    //     signInWithEmailAndPassword(auth, inputEmail, inputPassword)
-    //       .then(async (userCredential) => {
-    //         const user = userCredential.user;
-    //         const userEmail = user.email;
-    //         // Fetch user data by email from your database
-    //         const response = await fetch(
-    //           `/user/email/${encodeURIComponent(userEmail)}`
-    //         );
-    //         const data = await response.json();
-    //         setId(data.userId);
-    //         setLoggedIn(true);
-    //         // why do we need a second fetch??? i dont think I made this or did I????-- Colin.
-    //         const response2 = await fetch(`/user/id/${encodeURIComponent(id)}`);
-    //         const data2 = await response2.json();
-    //         setUserName(data2.username);
-    //       })
-    //       .catch((error) => {
-    //         console.error("Error logging in:", error.message);
-    //       })
-    //   }, [inputEmail, inputPassword]);   
 
     // use effect hook for getting groupchats and contents
     useEffect(() => {
@@ -102,7 +120,8 @@ const App = () => {
             const newServers = data.map(entry => {
               return {
                 id: entry.serverId,
-                name: entry.serverName
+                name: entry.serverName,
+                inviteCode: entry.inviteCode
               };
             });
             setServers(newServers);
@@ -185,9 +204,8 @@ const App = () => {
                 throw new Error("Error creating new chat");
             }
             // Get the group chat object by name
-            const groupChatResponse = await fetch(`/groupchat/name/${encodeURIComponent(name)}`);
-            const groupChatData = await groupChatResponse.json();
-            const groupChatId = groupChatData["groupChatId"];   
+            const groupChatData = await response.json();
+            const groupChatId = groupChatData["groupChatId"];
             // Add users to the group chat
             for (const user of users) {
                 const userId = await fetchUserIdByUsername(user);
@@ -212,8 +230,13 @@ const App = () => {
               }).catch(error => console.error("Error in adding group chat to server fetch:", error));
 
             const newChat = { id: groupChatId, users, name, messages: [] };
-            setChats([...chats, newChat]);
+            // setChats([...chats, newChat]);
             setNewError("");
+            stompClient.send(
+                `/app/server/${selectedServer.id}`,
+                {},
+                JSON.stringify(newChat)
+            )
         } catch (error) {
             console.error("Error creating new chat:", error);
         }
@@ -288,7 +311,69 @@ const App = () => {
                 alert("An error occurred while updating account info. Please try again.");
             }
         };
-    
+
+    async function fetchServerByInviteCode(inviteCode) {
+        const response = await fetch(`/server/invite/${inviteCode}`, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        });
+        
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error('Failed to fetch server by invite code');
+        }
+    }
+
+    // Function to create a server with a given name
+    async function createServer(serverName) {
+        const response = await fetch('/server', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ serverName }),
+        });
+      
+        if (response.ok) {
+          const inviteCode = await response.text();
+          setInviteCode(inviteCode);
+      
+          // Fetch the server object using the invite code
+          const server = await fetchServerByInviteCode(inviteCode);
+          return server;
+        } else {
+          throw new Error('Failed to create server');
+        }
+    }
+
+    // Function to add a user to a server by invite code
+    async function addUserToServerByInviteCode(inviteCode, userId) {
+        const response = await fetch(`/server/invite/${inviteCode}`);
+        if (response.ok) {
+            const server = await response.json();
+            const serverId = server.serverId;
+            const joinResponse = await fetch(`/server/${serverId}/user/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!joinResponse.ok) {
+                throw new Error("Failed to join server");
+            }
+        } else {
+            throw new Error("Invite code not found");
+        }
+    }
+
+    const togglePopup3 = () => {
+        setIsOpen3(!isOpen3);
+      };
+
+
     // Return main HTML for home page
     return (
         <div className="App" class="force-gray">
@@ -332,8 +417,19 @@ const App = () => {
                             sx={buttonSX}>
                             Manage Account
                         </Button>
+                        <Button onClick={togglePopup3} sx={buttonSX}>
+                            Create Server
+                        </Button>
                         </Grid>
                         </Stack>
+                        {selectedServer && selectedServer.inviteCode && (
+                        <>
+                            <h3>Server Invite Link</h3>
+                            <Link href={`/join-server/${selectedServer.inviteCode}`} target="_blank" rel="noopener">
+                            /join-server/{selectedServer.inviteCode}
+                            </Link>
+                        </>
+                        )}
                         {isOpen && (<CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
                                 <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Create New Chat</Typography>
                                 <Box>
@@ -415,11 +511,61 @@ const App = () => {
                                     <Button onClick={handlePopup2Create} sx={buttonSX}>Save</Button> <Button onClick={togglePopup2} sx={buttonSX}>CANCEL</Button>
                                 </Box></CssBaseline>
                         )}
-                        
+                        {isOpen3 && (
+                        <CssBaseline sx={{ m: 2, backgroundColor: "#313338" }}>
+                            <Typography variant="h5" className="header-message" sx={{ color: "white", m: 2 }}>
+                            Create New Server
+                            </Typography>
+                            <Box>
+                            <CssTextField
+                                type="text"
+                                id="serverName"
+                                placeholder="Server Name"
+                                size="15"
+                                value={newServerName}
+                                onChange={(event) => {
+                                setNewServerName(event.target.value);
+                                }}
+                                error={newError !== ""}
+                                sx={{ m: 2, input: { color: "#8b8b90" } }}
+                                key={id + "_create_server"}
+                            />
+                            <Divider />
+                            <Button
+                            onClick={async () => {
+                                    try {
+                                    const serverName = newServerName;
+                                    if (serverName) {
+                                        const server = await createServer(serverName);
+                                        console.log(`Server created with invite code: ${server.inviteCode}`);
+                                        await addUserToServerByInviteCode(server.inviteCode, id);
+                                        const newServer = {
+                                            id: server.id,
+                                            name: serverName,
+                                            inviteCode: server.inviteCode
+                                        };
+                                        setServers((prevServers) => [...prevServers, newServer]);
+                                        setSelectedServer(newServer);
+                                        togglePopup3();
+                                    }
+                                    } catch (error) {
+                                    console.error(error);
+                                    }
+                                }}
+                                sx={buttonSX}
+                            >
+                            Create
+                            </Button>
+                            <Button onClick={togglePopup3} sx={buttonSX}>
+                                CANCEL
+                            </Button>
+                            </Box>
+                        </CssBaseline>
+                        )}
                     </Grid>
                 </Grid>
                 <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
-                    <ServerList id={id} loggedIn={loggedIn} servers={servers} setServers={setServers} serverUsers={serverUsers} 
+                    <ServerList id={id} loggedIn={loggedIn} servers={servers} setServers={setServers} serverUsers={serverUsers} inviteCode = {inviteCode}
                         setServerUsers={setServerUsers} setChats={setChats} chats={chats} setSelectedServer={setSelectedServer} selectedServer={selectedServer} />
                         {!selectedServer && (
                             <Grid
@@ -437,9 +583,12 @@ const App = () => {
                           </Grid> 
                         )}
                 </Stack>
-                
-                
             </ThemeProvider>
+            <Router>
+                <Routes>
+                    <Route path="/join-server/:inviteCode" element={<JoinServer id = {id} />} />
+                </Routes>
+            </Router>
         </div>
       );
     }

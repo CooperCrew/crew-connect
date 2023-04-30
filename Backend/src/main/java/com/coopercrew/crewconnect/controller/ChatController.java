@@ -4,7 +4,9 @@ import org.springframework.stereotype.Controller;
 
 import com.coopercrew.crewconnect.Groupchat;
 import com.coopercrew.crewconnect.Message;
-
+import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -25,9 +27,15 @@ public class ChatController {
      
         return Message;
     }
+
     @MessageMapping("/server/{room}")
-            public Groupchat sendServerMessage(@DestinationVariable String room, @Payload Groupchat groupchat) {
-                    simpmessage.convertAndSend("/server/" + room,  groupchat);
-                    return groupchat;
-            }
+    public void sendServerMessage(@DestinationVariable String room, @Payload String payload) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode payloadJson = objectMapper.readTree(payload);
+            simpmessage.convertAndSend("/server/" + room, payload);
+        } catch (IOException e) {
+            System.out.println("Error parsing JSON payload: " + e.getMessage());
+        }
+    }
 }

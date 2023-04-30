@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Avatar,
-  Link,
-  List,
-  Grid,
-} from '@mui/material';
+import {ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid} from '@mui/material';
 import GroupChatList from './GroupChatList';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 
-const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerUsers, setChats, chats, selectedServer, setSelectedServer}) => {
-//   const [selectedServer, setSelectedServer] = useState(null);
+const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerUsers, setChats, chats, selectedServer, setSelectedServer, inviteCode}) => {
 
   const fetchGroupChatUsers = async (groupChatId) => {
     const response = await fetch(`/groupchats/` + groupChatId + `/users`, {
@@ -92,7 +85,9 @@ const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerU
         {servers.map((server) => (
           <ListItem
           button
-          onClick={() => setSelectedServer(server)}
+          onClick={() => {
+            setSelectedServer(server);
+          }}
           selected={selectedServer && selectedServer.id === server.id}
         >
           <ListItemText primary={server.name}></ListItemText>
@@ -106,6 +101,7 @@ const ServerList = ({ id, loggedIn, servers, setServers, serverUsers, setServerU
         chats={chats}
         setChats={setChats}
         serverUsers={serverUsers}
+        selectedServer = {selectedServer}
       />
     )}
   </>

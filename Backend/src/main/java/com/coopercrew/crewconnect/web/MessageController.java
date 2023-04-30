@@ -16,8 +16,6 @@ import com.coopercrew.crewconnect.*;
 import com.coopercrew.crewconnect.User;
 import com.coopercrew.crewconnect.UserDAO;
 
-
-
 @RestController
 @CrossOrigin
 public class MessageController {
@@ -54,7 +52,6 @@ public class MessageController {
     public Message createMessage(@RequestBody Message message) throws SQLException {
         MessageDAO messageDAO = new MessageDAO(connection);
         UserDAO userDAO = new UserDAO(connection);
-
         long messageID = messageDAO.sendMessage(message.getGroupChatId(), message.getUserId(), message.getTimeSent(), message.getMessage());
         message.setMessageId(messageID);
         User user = userDAO.findById(message.getUserId());
