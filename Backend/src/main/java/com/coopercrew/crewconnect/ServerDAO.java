@@ -19,12 +19,10 @@ public class ServerDAO extends DataAccessObject {
     // first we need to join users onto user_gc by user_id to get all groupchats that the user is a part of
     // then we need to join this new table onto server_groupchats by gc_id to get all the servers the groupchats are a part of
     // then do one final join on server_id to retrieve name and id of each server the user is a part of.
-    public static final String FIND_SERVERS_BY_USER_ID = "SELECT DISTINCT s.server_id, s.server_name " +
-    "FROM users u " +
-    "JOIN users_gc ugc ON u.user_id = ugc.user_id " +
-    "JOIN server_groupchats sg ON ugc.gc_id = sg.gc_id " +
-    "JOIN servers s ON sg.server_id = s.server_id " +
-    "WHERE u.user_id = ?";
+    public static final String FIND_SERVERS_BY_USER_ID = "SELECT s.server_id, s.server_name, s.invite_code " +
+    "FROM users_servers us " +
+    "JOIN servers s ON us.server_id = s.server_id " +
+    "WHERE us.user_id = ?";
     public static final String INSERT_USER_SERVER = "INSERT INTO users_servers (server_id, user_id) VALUES (?, ?)";
     public static final String GET_USERS_BY_SERVER_ID = "SELECT u.user_id, u.username, u.password, u.email, u.status FROM users u JOIN users_servers us ON u.user_id = us.user_id WHERE us.server_id = ?";
     public static final String GET_USER_GROUPCHATS_BY_SERVER_ID = "SELECT gc.gc_id, gc.group_name, gc.group_size, gc.date_created " +
@@ -44,6 +42,9 @@ public class ServerDAO extends DataAccessObject {
             server.setServerId(rs.getLong("server_id"));
             server.setServerName(rs.getString("server_name"));
             server.setInviteCode(rs.getString("invite_code"));
+            System.out.println("server_id: " + rs.getLong("server_id"));
+            System.out.println("server_name: " + rs.getString("server_name"));
+            System.out.println("invite_code: " + rs.getString("invite_code"));
         }
     }
 
@@ -136,6 +137,7 @@ public class ServerDAO extends DataAccessObject {
                 Server server = new Server();
                 server.setServerId(rs.getLong("server_id"));
                 server.setServerName(rs.getString("server_name"));
+                server.setInviteCode(rs.getString("invite_code"));
                 servers.add(server);
             }
         } catch (SQLException e) {
@@ -144,6 +146,7 @@ public class ServerDAO extends DataAccessObject {
         }
         return servers;
     }
+    
 
     public void addUserToServer(long serverId, long userId) {
         try (PreparedStatement statement = this.connection.prepareStatement(INSERT_USER_SERVER);) {

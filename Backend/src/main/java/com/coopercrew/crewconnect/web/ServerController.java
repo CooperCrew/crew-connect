@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
+
 @RestController
 @CrossOrigin
 public class ServerController {
@@ -106,5 +108,25 @@ public class ServerController {
     public Server getServerByInviteCode(@PathVariable String inviteCode) {
         ServerDAO serverDAO = new ServerDAO(connection);
         return serverDAO.getServerByInviteCode(inviteCode);
+    }
+
+    @PostMapping("/join/{inviteCode}/user/{userId}")
+    public ResponseEntity<String> joinServer(@PathVariable String inviteCode, @PathVariable long userId) {
+        ServerDAO serverDAO = new ServerDAO(connection);
+        System.out.println("invite code:" + inviteCode);
+        System.out.println("userId:" + userId);
+        Server server = serverDAO.getServerByInviteCode(inviteCode);
+        System.out.println("HERHEHERHEHREHRERHEEHREHEHREH IHIHIHIHIHIHIHIHIH Server object: " + server);
+        if (server == null) {
+            return ResponseEntity.badRequest().body("Invalid invite code.");
+        }
+        List<User> usersInServer = serverDAO.getUsersByServerId(server.getServerId());
+        for (User user : usersInServer) {
+            if (user.getUserId() == userId) {
+                return ResponseEntity.badRequest().body("User is already in the server.");
+            }
+        }
+        serverDAO.addUserToServer(server.getServerId(), userId);
+        return ResponseEntity.ok("User has been added to the server.");
     }
 }

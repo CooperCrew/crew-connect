@@ -38,10 +38,12 @@ public class GroupchatController {
 
     // insert groupchat
     @PostMapping("/groupchat")
-	public void makeGroupchat(@RequestBody Groupchat Groupchat) throws SQLException {
+    public Groupchat makeGroupchat(@RequestBody Groupchat Groupchat) throws SQLException {
         GroupchatDAO groupChatD = new GroupchatDAO(connection);
-        groupChatD.createGroupChat(Groupchat.getGroupName(), Groupchat.getGroupSize(), Groupchat.getDateCreated());
+        Groupchat createdGroupChat = groupChatD.createGroupChat(Groupchat.getGroupName(), Groupchat.getGroupSize(), Groupchat.getDateCreated());
+        return createdGroupChat;
     }
+    
 
     // get groupchat by group id
     @GetMapping("/groupchat/id/{group_id}") 

@@ -10,7 +10,7 @@ const CssTextField = styled(TextField)({
     }
 });
 
-const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect}) => { 
+const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChats, stompClient, connect, selectedServer}) => { 
     const [message, setMessage] = useState('');
 
     const buttonSX = {
@@ -166,7 +166,6 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                             Leave
                         </Button>
                     </Grid>
-                    
                 </Stack>
                 <Grid item>
                         {chat.messages.map((message, index) => (
@@ -190,10 +189,6 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                 </Grid>
             </Grid>
             <Grid item alignContent="right" sx={{width: '0.5%'}}>
-                    <h3>Server Invite Link</h3>
-                    <Link href="https://www.google.com" target="_blank" rel="noopener">
-                    Server Invite
-                    </Link>
                     <List>
                         <h3>Members</h3>
                         {chat.users.map((user) => (

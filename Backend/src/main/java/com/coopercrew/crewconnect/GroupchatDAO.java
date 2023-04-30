@@ -3,6 +3,7 @@ import com.coopercrew.crewconnect.util.DataAccessObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
 
 public class GroupchatDAO extends DataAccessObject{
@@ -136,15 +137,26 @@ public class GroupchatDAO extends DataAccessObject{
         }
     }
     
-    public void createGroupChat(String name, int size, String dateCreated){
-        try(PreparedStatement statement = this.connection.prepareStatement(INSERT_GROUPCHAT);) {
+    public Groupchat createGroupChat(String name, int size, String dateCreated) {
+        Groupchat groupchat = new Groupchat();
+        try (PreparedStatement statement = this.connection.prepareStatement(INSERT_GROUPCHAT, Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, name);
-            statement.setLong(2, size);
+            statement.setInt(2, size);
             statement.setString(3, dateCreated);
             statement.executeUpdate();
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                long gcId = generatedKeys.getLong(1);
+                groupchat.setGroupChatId(gcId);
+                groupchat.setGroupName(name);
+                groupchat.setGroupSize(size);
+                groupchat.setDateCreated(dateCreated);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        return groupchat;
     }
+    
 }

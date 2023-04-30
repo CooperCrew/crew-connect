@@ -7,14 +7,14 @@ import { Stomp } from '@stomp/stompjs';
 var stompClient = null;
 let currentChatId = null;
 var subscription = null;
-const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
+const GroupChatList = ({ id, loggedIn, chats, setChats, inviteCode, selectedServer}) => {
     // Variable Declarations
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [connectedToSocket, setConnectedToSocket] = useState(false);
 
     const connect = () => {
         if (!connectedToSocket){
-            let Sock = new SockJS('http://localhost:8080/ws');
+            let Sock = new SockJS('/ws');
             stompClient = Stomp.over(Sock);
             setConnectedToSocket(true);
             stompClient.connect({}, onConnect, onError);
@@ -136,6 +136,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats}) => {
                     setChats = {setChats}
                     stompClient={stompClient}
                     connect={connect}
+                    selectedServer = {selectedServer}
                 />
             )}
         </Grid>
