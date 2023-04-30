@@ -154,41 +154,42 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
     }
 
     return (
-        <Grid item xs={9}>
-            <Stack direction = "row" spacing={2} divider={<Divider orientation="vertical" flexItem />}>
-            <Grid item alignContent="left" sx={{width: '99.5%'}}>
-                <Stack direction = "row" spacing={2}>
-                    <Grid item xs alignContent="left">
-                        <h3>{chat.name}</h3>
-                    </Grid>
-                    <Grid item alignContent="right">
-                        <Button sx={buttonSX} onClick={handleLeave}>
-                            Leave
-                        </Button>
-                    </Grid>
-                </Stack>
-                <Grid item>
-                        {chat.messages.map((message, index) => (
-                        <Message message={message} handleDeleteMessage={handleDeleteMessage} id = {id} 
-                            // this is to only display the username if the previous message sender is not the same as the current message sender
-                            shouldDisplayUsername={index === 0 || chat.messages[index - 1].sender !== message.sender}/>
-                        ))}
-                        <Grid item xs>
-                        <CssTextField
-                            type="text"
-                            id="message"
-                            name="message"
-                            label="Type Something"
-                            value={message}
-                            onChange={handleNewMessageChange}
-                            onKeyPress={handleKeyPress}
-                            fullWidth
-                            sx={{ input: { color: '#8b8b90' } }}
-                        />
+            <Grid container direction = "row" spacing={2} divider={<Divider orientation="vertical" flexItem />}>
+                <Grid item alignContent="left" xs={12} md={8} lg={10}>
+                    <Grid item>
+                        <Grid container direction = "row" spacing={2}>
+                            <Grid item xs alignContent="left">
+                                <h3>{chat.name}</h3>
+                            </Grid>
+                            <Grid item alignContent="right">
+                                <Button sx={buttonSX} onClick={handleLeave}>
+                                    Leave
+                                </Button>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                                {chat.messages.map((message, index) => (
+                                <Message message={message} handleDeleteMessage={handleDeleteMessage} id = {id} 
+                                    // this is to only display the username if the previous message sender is not the same as the current message sender
+                                    shouldDisplayUsername={index === 0 || chat.messages[index - 1].sender !== message.sender}/>
+                                ))}
+                                <Grid item xs>
+                                <CssTextField
+                                    type="text"
+                                    id="message"
+                                    name="message"
+                                    label="Type Something"
+                                    value={message}
+                                    onChange={handleNewMessageChange}
+                                    onKeyPress={handleKeyPress}
+                                    fullWidth
+                                    sx={{ input: { color: '#8b8b90' } }}
+                                />
+                                </Grid>
                         </Grid>
                 </Grid>
-            </Grid>
-            <Grid item alignContent="right" sx={{width: '0.5%'}}>
+                </Grid>
+                <Grid item alignContent="right" xs={12} md={4} lg={2}>
                     <List>
                         <h3>Members</h3>
                         {chat.users.map((user) => (
@@ -200,9 +201,8 @@ const GroupChat = ({ chat, selectedChatId, setSelectedChatId, id, chats, setChat
                             </ListItem>
                         ))}
                     </List>
+                </Grid>
             </Grid>
-            </Stack>
-        </Grid>
     );
 };
 

@@ -7,7 +7,7 @@ import firebase from 'firebase/app';
 import GroupChatList from './GroupChatList';
 import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link, Grid, AppBar, Toolbar, Typography, Paper, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
+import { Link, Grid, AppBar, Toolbar, Typography, Paper, Tooltip, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import { styled } from '@mui/system';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -22,6 +22,31 @@ const CssTextField = styled(TextField)({
     "& .MuiInputLabel-root": {
         color: '#8b8b90'
     },
+});
+
+const CssSelect = styled(Select)({
+    backgroundColor: "#383840",
+    "& .MuiInputBase-root": {
+        "& input": {
+            color: 'white'
+        }
+    }, 
+    "& .MuiInputLabel-root": {
+        color: '#8b8b90 !important'
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(228, 219, 233, 0.25)',
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'rgba(228, 219, 233, 0.25)',
+    },
+    '&:hover:not(.Mui-disabled):before': {
+        borderColor: 'var(--galaxy-blue)',
+    },
+    '.MuiSvgIcon-root ': {
+    fill: "#8b8b90 !important",
+    },
+    
 });
 
 // Main application
@@ -41,6 +66,7 @@ const App = () => {
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpen3, setIsOpen3] = useState(false);
     const [userName, setUserName] = useState("");
+    const [tempUserName, setTempUserName] = useState("");
     const [newError, setNewError] = useState("");
     const [servers, setServers] = useState([]);
     const [serverUsers, setServerUsers] = useState([]);
@@ -49,6 +75,8 @@ const App = () => {
     const [inviteCode, setInviteCode] = useState("");
     const usersSelectRef = useRef();
     const [connectedToSocket, setConnectedToSocket] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [copyFeedback, setCopyFeedback] = React.useState("");
 
     // whenever selectedServer changes connect
     useEffect(() => {
@@ -93,7 +121,6 @@ const App = () => {
         },
         bgcolor: "#5865F2",
         color: 'white',
-        maxHeight: '50px',
         m: 1
     }
     
@@ -161,6 +188,18 @@ const App = () => {
         setServers([]);
         setServerUsers([]);
         setSelectedServer(null);
+    };
+
+    const copyToClipboard = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopyFeedback("Copied!");
+            setOpen(true);
+          } catch (err) {
+            console.log("INSIDE ", { open }, err);
+            setCopyFeedback("Failed to copy. Please check browser permissions.");
+            setOpen(true);
+          }
     };
     
 
@@ -262,6 +301,8 @@ const App = () => {
 
     // Handler for when the form to change the account info
     const handlePopup2Create = async (event) => {
+        setUserName(tempUserName);
+
         try {
             const userId = id;
             // update username
@@ -272,7 +313,7 @@ const App = () => {
                 },
                 body: JSON.stringify({
                 userId: userId,
-                username: userName,
+                username: tempUserName,
                 }),
             });
             // update email and password in Firebase
@@ -304,7 +345,7 @@ const App = () => {
             } else {
                 throw new Error("User not logged in");
             }
-            alert( "New Info: \n" + "Username: " + userName + "\nEmail: " + inputEmail + "\nPassword: " + inputPassword);
+            alert( "New Info: \n" + "Username: " + tempUserName + "\nEmail: " + inputEmail + "\nPassword: " + inputPassword);
             togglePopup2();
             } catch (error) {
                 console.error("Error updating account info:", error);
@@ -405,13 +446,6 @@ const App = () => {
                             sx={buttonSX}>
                             Log Out
                         </Button>
-                        {selectedServer && (
-                            <Button 
-                                onClick={togglePopup}
-                                sx={buttonSX}>
-                                New Chat
-                            </Button>
-                        )}
                         <Button 
                             onClick={togglePopup2}
                             sx={buttonSX}>
@@ -419,40 +453,66 @@ const App = () => {
                         </Button>
                         <Button onClick={togglePopup3} sx={buttonSX}>
                             Create Server
-                        </Button>
+                        </Button>     
                         </Grid>
-                        </Stack>
+                        <Divider/>
                         {selectedServer && selectedServer.inviteCode && (
-                        <>
-                            <h3>Server Invite Link</h3>
-                            <Link href={`/join-server/${selectedServer.inviteCode}`} target="_blank" rel="noopener">
+                           
+                        <Grid item alignContent="right">
+                            {/* <Typography variant="h6" sx={{color: 'white', m: 2}}>Server Invite Link</Typography>
+                            <Link href={`/join-server/${selectedServer.inviteCode}`} target="_blank" rel="noopener" sx={{m: 2}}>
                             /join-server/{selectedServer.inviteCode}
-                            </Link>
-                        </>
+                            </Link> */}
+                            <Button 
+                                onClick={togglePopup}
+                                sx={buttonSX}>
+                                New Channel
+                            </Button>
+                            <Tooltip
+                                open={open}
+                                onClose={() => setOpen(false)}
+                                title={copyFeedback}
+                                leaveDelay={1000}
+                            >
+                                <Button
+                                onClick={() => copyToClipboard("http://142.93.251.255:3000/join-server/"+selectedServer.inviteCode)}
+                                sx={buttonSX}
+                                >
+                                Copy Server Invite Link to Clipboard
+                                </Button>
+                            </Tooltip>
+                            
+                        </Grid>
                         )}
-                        {isOpen && (<CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
-                                <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Create New Chat</Typography>
-                                <Box>
-                                    <Stack direction="row"><CssTextField
-                                        type="text"
-                                        id="name"
-                                        placeholder="Chat Name"
-                                        size="15"
-                                        value={chatName}
-                                        onChange={(event) => {setChatName(event.target.value);}}
-                                        error={newError!==""}
-                                        sx={{ m: 2, input: { color: '#8b8b90' } }}
-                                        key={id+"_create"}
-                                    />
+                        </Stack>
+                        
+                        {isOpen && (<Grid item sx={{minWidth: 400}}><CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
+                                <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Create New Channel</Typography>
+                                    <Grid container direction="row">
+                                        <Grid item>
+                                        <CssTextField
+                                            type="text"
+                                            id="name"
+                                            placeholder="Chat Name"
+                                            size="15"
+                                            value={chatName}
+                                            onChange={(event) => {setChatName(event.target.value);}}
+                                            error={newError!==""}
+                                            sx={{ minWidth: 200, m: 2, input: { color: '#8b8b90' } }}
+                                            key={id+"_create"}
+                                        />
+                                    </Grid>
+                                    <Grid item>
                                     <FormControl sx={{ m: 2 }}>
-                                    <InputLabel id="users-label">Users</InputLabel>
-                                    <Select
+                                    <InputLabel id="users-label" sx={{color: '#8b8b90' }}>Users</InputLabel>
+                                    <CssSelect
                                         labelId="users-label"
                                         id="users"
+                                        placeholder="Users"
                                         multiple
                                         value={users}
                                         onChange={(event) => setUsers(event.target.value)}
-                                        sx={{ minWidth: 200, input: { color: '#8b8b90' } }}
+                                        sx={{ minWidth: 200, color: '#8b8b90' }}
                                         ref={usersSelectRef}
                                     >
                                         {serverUsers.map((user) => (
@@ -460,24 +520,24 @@ const App = () => {
                                                 {user.username}
                                             </MenuItem>
                                         ))}
-                                    </Select>
+                                    </CssSelect>
                                     </FormControl>
-                                    </Stack>
-                                    <Divider/>
+                                    </Grid>
+                                    </Grid>
                                     <Button onClick={handlePopupCreate} sx={buttonSX}>Create</Button> <Button onClick={togglePopup} sx={buttonSX}>CANCEL</Button>
-                                </Box></CssBaseline>
+                                </CssBaseline></Grid>
                         )}
-                        {isOpen2 && (<CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
+                        {isOpen2 && (<Grid item sx={{minWidth: 400}}><CssBaseline sx={{m: 2, backgroundColor: "#313338"}}>
                                 <Typography variant="h5" className="header-message" sx={{color: 'white', m: 2}}>Change Account Info</Typography>
                                 <Typography variant="p" className="header-message" sx={{color: 'white', m: 2}}>Input new desired account information.</Typography>
                                 <Box>
-                                    <Stack direction="column"><CssTextField
+                                    <CssTextField
                                         type="text"
                                         id="name"
                                         placeholder="Username"
                                         size="15"
-                                        value={userName}
-                                        onChange={(event) => {setUserName(event.target.value);}}
+                                        // value={userName}
+                                        onChange={(event) => {setTempUserName(event.target.value);}}
                                         error={newError!==""}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
                                         autoFocus
@@ -506,13 +566,12 @@ const App = () => {
                                         helperText={newError}
                                         sx={{ m: 2, input: { color: '#8b8b90' } }}
                                     />
-                                    </Stack>
                                     <Divider/>
                                     <Button onClick={handlePopup2Create} sx={buttonSX}>Save</Button> <Button onClick={togglePopup2} sx={buttonSX}>CANCEL</Button>
-                                </Box></CssBaseline>
+                                </Box></CssBaseline></Grid>
                         )}
                         {isOpen3 && (
-                        <CssBaseline sx={{ m: 2, backgroundColor: "#313338" }}>
+                        <Grid item sx={{minWidth: 400}}><CssBaseline sx={{ m: 2, backgroundColor: "#313338" }}>
                             <Typography variant="h5" className="header-message" sx={{ color: "white", m: 2 }}>
                             Create New Server
                             </Typography>
@@ -560,13 +619,15 @@ const App = () => {
                                 CANCEL
                             </Button>
                             </Box>
-                        </CssBaseline>
+                        </CssBaseline></Grid>
                         )}
                     </Grid>
                 </Grid>
+                <Grid>
                 <Stack direction="row" sx={textSX} spacing={2} divider={<Divider orientation="vertical" flexItem />}>
                     <ServerList id={id} loggedIn={loggedIn} servers={servers} setServers={setServers} serverUsers={serverUsers} inviteCode = {inviteCode}
-                        setServerUsers={setServerUsers} setChats={setChats} chats={chats} setSelectedServer={setSelectedServer} selectedServer={selectedServer} />
+                        setServerUsers={setServerUsers} setChats={setChats} chats={chats} setSelectedServer={setSelectedServer} selectedServer={selectedServer}/>
+                    
                         {!selectedServer && (
                             <Grid
                             container
@@ -583,6 +644,7 @@ const App = () => {
                           </Grid> 
                         )}
                 </Stack>
+                </Grid>
             </ThemeProvider>
             <Router>
                 <Routes>

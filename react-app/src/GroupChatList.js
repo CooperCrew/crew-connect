@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid } from '@mui/material';
+import { ListItem, ListItemIcon, ListItemText, Avatar, Link, List, Grid, Stack } from '@mui/material';
 import GroupChat from './GroupChat';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -111,8 +111,8 @@ const GroupChatList = ({ id, loggedIn, chats, setChats, inviteCode, selectedServ
     };
 
     return (
-    <Grid container>
-        <Grid item sx={{width: '20%'}}>
+    <Grid container direction="row">
+        <Grid item xs={12} md={4} lg={2.2}>
             <List>
             <h3>Channels</h3>
             {chats.map((chat) => (
@@ -125,7 +125,7 @@ const GroupChatList = ({ id, loggedIn, chats, setChats, inviteCode, selectedServ
                 ))}
             </List>
         </Grid>
-        <Grid item sx={{width: '80%'}}>
+        <Grid item xs={12} md={8} lg={9.8}>
             {selectedChatId && (
                 <GroupChat
                     chat={chats.find((chat) => chat.id === selectedChatId)}
