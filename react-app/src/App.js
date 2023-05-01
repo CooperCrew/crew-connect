@@ -5,7 +5,7 @@ import JoinServer from "./JoinServer";
 import { getAuth, signOut, updateEmail, updatePassword} from 'firebase/auth';
 import ServerList from './ServerList';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Grid, Typography, Paper, Tooltip, CssBaseline, Divider, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
+import { Grid, Typography, Paper, Tooltip, CssBaseline, Divider, Link, TextField, Button, Box, List, ListItem, ListItemIcon, Avatar, ListItemText, Stack, Select, MenuItem, InputLabel, FormControl} from '@mui/material';
 import { styled } from '@mui/system';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -196,7 +196,7 @@ const App = () => {
             setOpen(true);
           } catch (err) {
             console.log("INSIDE ", { open }, err);
-            setCopyFeedback("Failed to copy. Please check browser permissions.");
+            setCopyFeedback("The browser is mad at us because our site is insecure.");
             setOpen(true);
           }
     };
@@ -459,18 +459,13 @@ const App = () => {
                         </Grid>
                         <Divider/>
                         {selectedServer && selectedServer.inviteCode && (
-                           
-                        <Grid item alignContent="right">
-                            {/* <Typography variant="h6" sx={{color: 'white', m: 2}}>Server Invite Link</Typography>
-                            <Link href={`/join-server/${selectedServer.inviteCode}`} target="_blank" rel="noopener" sx={{m: 2}}>
-                            /join-server/{selectedServer.inviteCode}
-                            </Link> */}
+                        <Grid item>
                             <Button 
                                 onClick={togglePopup}
                                 sx={buttonSX}>
                                 New Channel
                             </Button>
-                            <Tooltip
+                            {/* <Tooltip
                                 open={open}
                                 onClose={() => setOpen(false)}
                                 title={<Typography fontSize={20}>{copyFeedback}</Typography>}
@@ -482,8 +477,16 @@ const App = () => {
                                     >
                                     Copy Server Invite Link to Clipboard
                                     </Button>
-                            </Tooltip>
+                            </Tooltip> */}
                             
+                        </Grid>
+                        )}
+                        {selectedServer && selectedServer.inviteCode && (
+                        <Grid item sx={{ml: 5}} xs={12} md={10}>
+                            <Typography variant="h6" sx={{color: 'white'}}>Server Invite Link</Typography>
+                            <Link href={`http://142.93.251.255:3000/join-server/${selectedServer.inviteCode}`} target="_blank" rel="noopener">
+                            http://142.93.251.255:3000/join-server/{selectedServer.inviteCode}
+                            </Link> 
                         </Grid>
                         )}
                         </Stack>
