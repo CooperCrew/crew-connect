@@ -14,11 +14,11 @@ Here are the results of our unit testing that ensure that our service is reliabl
 
 Proof of tests passing:
 
-![Unit Test Success](UnitTests/UnitTestSuccess.PNG)
+![Unit Test Success](UnitTests/JacocoSuccess.PNG)
 
 Code coverage - 62%:
 
-![Unit Test Coverage](UnitTests/UnitTestCoverage.PNG)
+![Unit Test Coverage](UnitTests/JacocoResults.PNG)
 
 
 ## Getting Started
