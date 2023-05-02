@@ -16,7 +16,7 @@ Proof of tests passing:
 
 ![Unit Test Success](UnitTests/JacocoSuccess.PNG)
 
-Code coverage - 62%:
+Code coverage - 59%:
 
 ![Unit Test Coverage](UnitTests/JacocoResults.PNG)
 
